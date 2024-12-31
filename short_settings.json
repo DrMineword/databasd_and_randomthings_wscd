@@ -1,0 +1,21 @@
+{
+  "base_url": "https://drmineword.github.io/Artefact-Boost-Active/redirect/url",
+  "url_params": [
+    {
+      "key": "url",
+      "value": "${url}"
+    },
+    {
+      "key": "background",
+      "value": "https://raw.githubusercontent.com/DrMineword/1045060846654603305_bot_images/refs/heads/master/src/img/game/portraits/portrait_CerberusPhoenix.jpg"
+    },
+    {
+      "key": "time",
+      "value": "6"
+    },
+    {
+      "key": "name",
+      "value": "${name}"
+    }
+  ]
+}
