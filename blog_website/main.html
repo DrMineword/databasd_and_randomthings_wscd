@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Blog</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: black;
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        p {
+            line-height: 1.6;
+        }
+        .posts, .post-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .post, .post-content {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .post img, .post-content img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .post h3 {
+            margin: 10px 0;
+        }
+        .post a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .post a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <h1>Loading...</h1>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        // Configuration
+        const mainJsonUrl = "https://raw.githubusercontent.com/DrMineword/swietlica-wiejska-w-spale/refs/heads/main/main.json?token=GHSAT0AAAAAACWZK4GMLT3O55MIMBBNJO4GZ3WX3PQ";
+        const baseGitHubUrl = "https://raw.githubusercontent.com/DrMineword/swietlica-wiejska-w-spale/refs/heads/main/data";
+        const baseUrl = "https://raw.githubusercontent.com/DrMineword/swietlica-wiejska-w-spale/refs/heads/main";
+
+        // Helper: Get query parameter
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Parse color tags in text
+        function parseColors(text) {
+            return text.replace(/<color=([#a-fA-F0-9]{6})>(.*?)<\/color>/g, (_, color, content) => {
+                return `<span style="color: ${color}">${content}</span>`;
+            });
+        }
+
+        // Load main page or subpage
+        const subId = getQueryParam("sub");
+        if (subId) {
+            // Subpage logic
+            fetch(`${baseGitHubUrl}/${subId}/index.json`)
+                .then(response => response.json())
+                .then(data => {
+                    document.body.style.backgroundImage = `url(${data.background_url})`;
+
+                    const app = document.getElementById("app");
+                    app.querySelector("h1").innerHTML = data.title;
+
+                    const content = `
+                        <div class="post-content">
+                            <p>${parseColors(data.desc)}</p>
+                            <img src="${data.imgurl}" alt="${data.title}">
+                        </div>
+                    `;
+                    document.getElementById("content").innerHTML = content;
+                })
+                .catch(err => {
+                    console.error("Error loading subpage JSON:", err);
+                    document.getElementById("content").innerHTML = `<p>Content not found.</p>`;
+                });
+        } else {
+            // Main page logic
+            fetch(mainJsonUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.body.style.backgroundImage = `url(${data.background_url})`;
+
+                    const app = document.getElementById("app");
+                    app.querySelector("h1").innerHTML = data.title;
+
+                    const postsContainer = document.createElement("div");
+                    postsContainer.classList.add("posts");
+                    data.posts.forEach(post => {
+                        const postElement = document.createElement("div");
+                        postElement.classList.add("post");
+
+                        postElement.innerHTML = `
+                            <img src="${post.imgurl}" alt="${post.title}">
+                            <h3>${post.title}</h3>
+                            <p>${parseColors(post.desc)}</p>
+                            <a href="${baseUrl}?sub=${post.id}" target="_self">${post.button_name}</a>
+                        `;
+
+                        postsContainer.appendChild(postElement);
+                    });
+                    document.getElementById("content").appendChild(postsContainer);
+                })
+                .catch(err => {
+                    console.error("Error loading main page JSON:", err);
+                    document.getElementById("content").innerHTML = `<p>Content not found.</p>`;
+                });
+        }
+    </script>
+</body>
+</html>
