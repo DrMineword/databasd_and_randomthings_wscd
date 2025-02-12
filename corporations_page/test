@@ -74,8 +74,8 @@
         <pre>
 | Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
 |------------|-------------|------------|-------------|------------|
-| [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | 2025-02-12T12:00:00Z |
-| [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | 2025-02-12T13:00:00Z |
+| [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | 2025-02-12 12:00:00 UTC |
+| [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | 2025-02-12 13:00:00 UTC |
         </pre>
     </div>
 
@@ -123,7 +123,7 @@
 
         // Convert Boost Status Timestamp
         function convertBoostStatus(saved_ms, now_ms) {
-            return saved_ms > now_ms ? "<p>Boost is active!</p>" : "<p>Boost is not active.</p>";
+            return saved_ms > now_ms ? "<p>Boost is active and will end on ${time_boost_end} UTC</p>" : "<p>Boost is not active.</p>";
         }
 
         // Get the markdown content
