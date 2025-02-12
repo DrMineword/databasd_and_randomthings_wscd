@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Display</title>
+    <title>Markdown to HTML Table Example</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #1e1e1e; color: #dcdcdc; }
         h2 { color: #ffcc00; }
@@ -60,59 +60,23 @@
     </div>
 
     <h2>Saved Markdown Table 1 (Values Only)</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Value1</th>
-                    <th>Value2</th>
-                    <th>Value3</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>123</td>
-                    <td>ABC</td>
-                    <td><img src="https://example.com/icon.png" width="20" height="20" alt="Icon"></td>
-                </tr>
-                <tr>
-                    <td>456</td>
-                    <td>DEF</td>
-                    <td><img src="https://example.com/icon2.png" width="20" height="20" alt="Icon"></td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="table-container" id="table1">
+        <pre>
+| Value1 | Value2 | Value3 |
+|--------|--------|--------|
+| 123    | ABC    | ![icon](https://example.com/icon.png) |
+| 456    | DEF    | ![icon](https://example.com/icon2.png) |
+        </pre>
     </div>
 
     <h2>Competition Results</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Corp1 Name</th>
-                    <th>Corp1 Score</th>
-                    <th>Corp2 Name</th>
-                    <th>Corp2 Score</th>
-                    <th>Time Ended</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><a href="https://corp1.com">Corp1</a></td>
-                    <td>5000</td>
-                    <td><a href="https://corp2.com">Corp2</a></td>
-                    <td>4500</td>
-                    <td><t:1718200000:F></td>
-                </tr>
-                <tr>
-                    <td><a href="https://corp3.com">Corp3</a></td>
-                    <td>3200</td>
-                    <td><a href="https://corp4.com">Corp4</a></td>
-                    <td>3100</td>
-                    <td><t:1718210000:F></td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="table-container" id="table2">
+        <pre>
+| Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
+|------------|-------------|------------|-------------|------------|
+| [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | <timestamp:1718200000000> |
+| [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | <timestamp:1718210000000> |
+        </pre>
     </div>
 
     <h2>Artifact Boost Status</h2>
@@ -123,6 +87,67 @@
     <p>Last edit: [Placeholder]</p>
 
     <script>
+        // Markdown to HTML Table conversion function
+        function convertMarkdownToHTML(markdown) {
+            // Convert markdown table into HTML table format
+            const lines = markdown.split("\n").filter(line => line.trim() !== "");
+            const headers = lines[0].split("|").map(header => header.trim()).slice(1, -1);
+            const rows = lines.slice(2);
+
+            // Start table structure
+            let tableHTML = "<table><thead><tr>";
+
+            // Add headers
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+
+            tableHTML += "</tr></thead><tbody>";
+
+            // Add rows
+            rows.forEach(row => {
+                const cols = row.split("|").map(col => col.trim()).slice(1, -1);
+                tableHTML += "<tr>";
+                cols.forEach(col => {
+                    tableHTML += `<td>${col}</td>`;
+                });
+                tableHTML += "</tr>";
+            });
+
+            tableHTML += "</tbody></table>";
+            return tableHTML;
+        }
+
+        // Convert timestamp to local time (e.g., Discord-style <timestamp:unix_time>)
+        function convertTimestampToLocalTime(markdown) {
+            return markdown.replace(/<timestamp:(\d+)>/g, (match, unixTimestamp) => {
+                const localDate = new Date(parseInt(unixTimestamp));
+                return `<t:${Math.floor(localDate.getTime() / 1000)}:F>`;  // Format as Discord-style timestamp
+            });
+        }
+
+        // Convert Markdown links [text](url) to <a href="url">text</a>
+        function convertLinksToHyperlinks(markdown) {
+            return markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+                return `<a href="${url}" target="_blank">${text}</a>`;
+            });
+        }
+
+        // Get the markdown content
+        const table1Markdown = document.querySelector("#table1 pre").textContent;
+        const table2Markdown = document.querySelector("#table2 pre").textContent;
+
+        // Convert the Markdown tables to HTML
+        const table1HTML = convertMarkdownToHTML(table1Markdown);
+        const table2HTML = convertMarkdownToHTML(table2Markdown);
+
+        // Convert timestamps and links in the markdown
+        const table2HTMLWithLinks = convertLinksToHyperlinks(convertTimestampToLocalTime(table2HTML));
+
+        // Replace markdown with HTML table
+        document.getElementById("table1").innerHTML = table1HTML;
+        document.getElementById("table2").innerHTML = table2HTMLWithLinks;
+
         // Example Unix timestamps (in milliseconds)
         const artifactBoostEnd = 1718192400000; // Example timestamp
         const now = Date.now();
