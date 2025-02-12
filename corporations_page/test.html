@@ -64,8 +64,8 @@
         <pre>
 | Value1 | Value2 | Value3 |
 |--------|--------|--------|
-| 123    | ABC    | ![icon](https://example.com/icon.png) |
-| 456    | DEF    | ![icon](https://example.com/icon2.png) |
+| 123    | ABC    | https://example.com/icon.png |
+| 456    | DEF    | https://example.com/icon2.png |
         </pre>
     </div>
 
@@ -74,8 +74,8 @@
         <pre>
 | Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
 |------------|-------------|------------|-------------|------------|
-| [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | <timestamp:1718200000000> |
-| [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | <timestamp:1718210000000> |
+| [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | 2025-02-12T12:00:00Z |
+| [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | 2025-02-12T13:00:00Z |
         </pre>
     </div>
 
@@ -114,14 +114,6 @@
             return tableHTML;
         }
 
-        // Convert timestamps to local time (e.g., Discord-style <timestamp:unix_time>)
-        function convertTimestampToLocalTime(markdown) {
-            return markdown.replace(/<timestamp:(\d+)>/g, (match, unixTimestamp) => {
-                const localDate = new Date(parseInt(unixTimestamp));
-                return `<t:${Math.floor(localDate.getTime() / 1000)}:F>`;  // Format as Discord-style timestamp
-            });
-        }
-
         // Convert Links to Hyperlinks
         function convertLinksToHyperlinks(markdown) {
             return markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
@@ -129,10 +121,9 @@
             });
         }
 
-        // Convert Boost Timestamp to local time (testing large future timestamp)
-        function convertBoostTimestampToLocalTime(timestamp) {
-            const largeTimestamp = new Date(parseInt(timestamp));
-            return `<t:${Math.floor(largeTimestamp.getTime() / 1000)}:F>`;
+        // Convert Boost Status Timestamp
+        function convertBoostStatus(saved_ms, now_ms) {
+            return saved_ms > now_ms ? "<p>Boost is active!</p>" : "<p>Boost is not active.</p>";
         }
 
         // Get the markdown content
@@ -143,21 +134,20 @@
         const table1HTML = convertMarkdownToHTML(table1Markdown);
         let table2HTML = convertMarkdownToHTML(table2Markdown);
 
-        // Convert timestamps and links in the markdown
-        table2HTML = convertLinksToHyperlinks(convertTimestampToLocalTime(table2HTML));
+        // Convert links in the markdown to hyperlinks
+        table2HTML = convertLinksToHyperlinks(table2HTML);
 
-        // Handle Boost Status timestamp
-        const artifactBoostEnd = 1718192400000;  // Correct Example timestamp for boost end (in ms)
-        const now = Date.now();
+        // Boost time check (Example timestamp)
+        const saved_ms = 1718192400000;  // Example saved timestamp (ms)
+        const now_ms = Date.now();  // Current Unix timestamp in milliseconds
 
-        // Set Boost Status based on timestamp (Check if boost has ended)
-        const boostStatus = now > artifactBoostEnd ? "Boost has ended." : "Boost is active!";
-        const formattedBoostTimestamp = convertBoostTimestampToLocalTime(artifactBoostEnd);
+        // Get Boost status message
+        const boostStatusHTML = convertBoostStatus(saved_ms, now_ms);
 
-        // Update the Boost Status with the timestamp info
-        document.getElementById('boostStatus').innerText = `${boostStatus} (Ends at: ${formattedBoostTimestamp})`;
+        // Update Boost Status message
+        document.getElementById('boostStatus').innerHTML = boostStatusHTML;
 
-        // Replace markdown with HTML table and Boost Status
+        // Replace markdown with HTML table
         document.getElementById("table1").innerHTML = table1HTML;
         document.getElementById("table2").innerHTML = table2HTML;
     </script>
