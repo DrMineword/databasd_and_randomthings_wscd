@@ -14,13 +14,7 @@
 </head>
 <body>
 
-    <h2>Saved Markdown Table</h2>
-    <pre id="mdTable">
-| Value1 | Value2 | Value3 |
-|--------|--------|--------|
-| 123    | ABC    | https://example.com/icon.png |
-| 456    | DEF    | https://example.com/icon2.png |
-</pre>
+    
 
     <h2>Small JSON Data</h2>
     <pre id="jsonData">
@@ -30,10 +24,24 @@
             "icon_url": "https://example.com/icon.png"
         }
     </pre>
+<h2>Saved Markdown Table</h2>
+    <pre id="mdTable1">
+| Value1 | Value2 | Value3 |
+|--------|--------|--------|
+| 123    | ABC    | https://example.com/icon.png |
+| 456    | DEF    | https://example.com/icon2.png |
+</pre>
 
     <h2>Artifact Boost Status</h2>
     <p id="boostStatus">Checking...</p>
 
+<h2>Saved Markdown Table</h2>
+    <pre id="mdTable2">| Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
+|------------|------------|------------|------------|------------|
+| [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | <t:1718200000:F> |
+| [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | <t:1718210000:F> |
+
+</pre>
     <h2>Competition Results</h2>
     <table>
         <thead>
