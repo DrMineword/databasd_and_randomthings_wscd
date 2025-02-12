@@ -13,6 +13,42 @@
         .json-string { color: #ce9178; }
         .json-number { color: #b5cea8; }
         a { color: #4ea9ff; text-decoration: none; }
+
+        /* Style for Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #333;
+        }
+
+        table, th, td {
+            border: 1px solid #666;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #444;
+            color: #fff;
+        }
+
+        td {
+            background-color: #2d2d2d;
+            color: #dcdcdc;
+        }
+
+        a {
+            color: #4ea9ff;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -24,20 +60,60 @@
     </div>
 
     <h2>Saved Markdown Table 1 (Values Only)</h2>
-    <pre>
-| Value1 | Value2 | Value3 |
-|--------|--------|--------|
-| 123    | ABC    | ![icon](https://example.com/icon.png) |
-| 456    | DEF    | ![icon](https://example.com/icon2.png) |
-    </pre>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Value1</th>
+                    <th>Value2</th>
+                    <th>Value3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>123</td>
+                    <td>ABC</td>
+                    <td><img src="https://example.com/icon.png" width="20" height="20" alt="Icon"></td>
+                </tr>
+                <tr>
+                    <td>456</td>
+                    <td>DEF</td>
+                    <td><img src="https://example.com/icon2.png" width="20" height="20" alt="Icon"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <h2>Competition Results</h2>
-    <pre>
-| Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
-|------------|------------|------------|------------|------------|
-| [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | <t:1718200000:F> |
-| [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | <t:1718210000:F> |
-    </pre>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Corp1 Name</th>
+                    <th>Corp1 Score</th>
+                    <th>Corp2 Name</th>
+                    <th>Corp2 Score</th>
+                    <th>Time Ended</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://corp1.com">Corp1</a></td>
+                    <td>5000</td>
+                    <td><a href="https://corp2.com">Corp2</a></td>
+                    <td>4500</td>
+                    <td><t:1718200000:F></td>
+                </tr>
+                <tr>
+                    <td><a href="https://corp3.com">Corp3</a></td>
+                    <td>3200</td>
+                    <td><a href="https://corp4.com">Corp4</a></td>
+                    <td>3100</td>
+                    <td><t:1718210000:F></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <h2>Artifact Boost Status</h2>
     <p id="boostStatus">Checking...</p>
