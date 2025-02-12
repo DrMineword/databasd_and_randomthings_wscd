@@ -15,7 +15,12 @@
 <body>
 
     <h2>Saved Markdown Table</h2>
-    <pre id="mdTable"> <!-- Raw .md table goes here --> </pre>
+    <pre id="mdTable">
+| Value1 | Value2 | Value3 |
+|--------|--------|--------|
+| 123    | ABC    | https://example.com/icon.png |
+| 456    | DEF    | https://example.com/icon2.png |
+</pre>
 
     <h2>Small JSON Data</h2>
     <pre id="jsonData">
