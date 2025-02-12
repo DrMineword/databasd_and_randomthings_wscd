@@ -52,25 +52,23 @@
     </style>
 </head>
 <body>
-
-    <h2>Small JSON Data</h2>
-    <div class="json-block">
+<div class="json-block">
         <p><span class="json-string">${NAME}</span></p>
         <p>ID: <span class="json-number">12345</span></p>
 <p><img src="https://cdn.discordapp.com/avatars/987284796789116949/20f2aebe59e1ff7029a5f50f19542b95.png" width="50" height="50" alt="Icon"></p>
     </div>
 
-    <h2>Saved Markdown Table 1 (Values Only)</h2>
+   <h2>Data</h2>
     <div class="table-container" id="table1">
         <pre>
-| Value1 | Value2 | Value3 |
-|--------|--------|--------|
-| 123    | ABC    | https://example.com/icon.png |
-| 456    | DEF    | https://example.com/icon2.png |
+| Name | Value |
+|--------|--------|
+| 123    | ABC    | 
+| 456    | DEF    | 
         </pre>
     </div>
 
-    <h2>Competition Results</h2>
+    <h2>Match History</h2>
     <div class="table-container" id="table2">
         <pre>
 | Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
@@ -88,11 +86,11 @@
         </pre>
     </div>
 
-    <h2>Artifact Boost Status</h2>
+    <h2>Artefact Boost Status</h2>
     <p id="boostStatus">Checking...</p>
 
-    <h2>Message</h2>
-    <p>Made with data from <a href="https://example.com">Example Source</a></p>
+    <br>
+    <p>Made with data from <a href="https://ws.mentalisit.myds.me/">ws.mentalisit.myds.me/</a></p>
     <p>Last edit: [Placeholder]</p>
 
     <script>
