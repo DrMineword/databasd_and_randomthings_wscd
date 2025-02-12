@@ -5,64 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Display</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid black; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .hidden { display: none; }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #1e1e1e; color: #dcdcdc; }
+        h2 { color: #ffcc00; }
+        pre { background-color: #252526; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; font-size: 14px; }
+        .json-block { background-color: #2d2d2d; padding: 10px; border-radius: 5px; font-family: monospace; }
+        .json-key { color: #9cdcfe; }
+        .json-string { color: #ce9178; }
+        .json-number { color: #b5cea8; }
+        a { color: #4ea9ff; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    
-
     <h2>Small JSON Data</h2>
-    <pre id="jsonData">
-        {
-            "name": "[Example](https://example.com)",
-            "id": 12345,
-            "icon_url": "https://example.com/icon.png"
-        }
-    </pre>
-<h2>Saved Markdown Table</h2>
-    <pre id="mdTable1">
+    <div class="json-block">
+        <p><span class="json-string">${NAME}</span> | <img src="https://example.com/icon.png" width="20" height="20" alt="Icon"></p>
+        <p>-# ID: <span class="json-number">12345</span></p>
+    </div>
+
+    <h2>Saved Markdown Table 1 (Values Only)</h2>
+    <pre>
 | Value1 | Value2 | Value3 |
 |--------|--------|--------|
-| 123    | ABC    | https://example.com/icon.png |
-| 456    | DEF    | https://example.com/icon2.png |
-</pre>
+| 123    | ABC    | ![icon](https://example.com/icon.png) |
+| 456    | DEF    | ![icon](https://example.com/icon2.png) |
+    </pre>
 
-    <h2>Artifact Boost Status</h2>
-    <p id="boostStatus">Checking...</p>
-
-<h2>Saved Markdown Table</h2>
-    <pre id="mdTable2">| Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
+    <h2>Competition Results</h2>
+    <pre>
+| Corp1 Name | Corp1 Score | Corp2 Name | Corp2 Score | Time Ended |
 |------------|------------|------------|------------|------------|
 | [Corp1](https://corp1.com) | 5000 | [Corp2](https://corp2.com) | 4500 | <t:1718200000:F> |
 | [Corp3](https://corp3.com) | 3200 | [Corp4](https://corp4.com) | 3100 | <t:1718210000:F> |
+    </pre>
 
-</pre>
-    <h2>Competition Results</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Corp 1 Name</th>
-                <th>Corp 1 Score</th>
-                <th>Corp 2 Name</th>
-                <th>Corp 2 Score</th>
-                <th>Time Ended</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><a href="https://corp1.com">Corp 1</a></td>
-                <td>5000</td>
-                <td><a href="https://corp2.com">Corp 2</a></td>
-                <td>4500</td>
-                <td id="timeEnded">Loading...</td>
-            </tr>
-        </tbody>
-    </table>
+    <h2>Artifact Boost Status</h2>
+    <p id="boostStatus">Checking...</p>
 
     <h2>Message</h2>
     <p>Made with data from <a href="https://example.com">Example Source</a></p>
@@ -71,19 +49,10 @@
     <script>
         // Example Unix timestamps (in milliseconds)
         const artifactBoostEnd = 1718192400000; // Example timestamp
-        const competitionEnd = 1718200000000;  // Example timestamp
-
-        function formatTimestamp(ms) {
-            return `<t:${Math.floor(ms / 1000)}:F>`; // Discord-style timestamp
-        }
-
-        // Check if artifact boost is still active
         const now = Date.now();
-        document.getElementById('boostStatus').innerText = 
-            now > artifactBoostEnd ? "Boost has ended." : "Boost is active!";
 
-        // Format competition end time
-        document.getElementById('timeEnded').innerHTML = formatTimestamp(competitionEnd);
+        document.getElementById('boostStatus').innerText =
+            now > artifactBoostEnd ? "Boost has ended." : "Boost is active!";
     </script>
 
 </body>
