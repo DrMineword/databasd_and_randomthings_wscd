@@ -126,18 +126,17 @@
             });
         }
 
-        // Convert timestamps in boost status (can set a very large value for testing)
-        function convertBoostTimestampToLocalTime(timestamp) {
-            // Format a large timestamp (e.g., "9999999999999" which is far in the future)
-            const largeTimestamp = new Date(parseInt(timestamp));
-            return `<t:${Math.floor(largeTimestamp.getTime() / 1000)}:F>`; 
-        }
-
         // Convert Links to Hyperlinks
         function convertLinksToHyperlinks(markdown) {
             return markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
                 return `<a href="${url}" target="_blank">${text}</a>`;
             });
+        }
+
+        // Convert Boost Timestamp to local time
+        function convertBoostTimestampToLocalTime(timestamp) {
+            const largeTimestamp = new Date(parseInt(timestamp));
+            return `<t:${Math.floor(largeTimestamp.getTime() / 1000)}:F>`;
         }
 
         // Get the markdown content
@@ -155,12 +154,15 @@
         const largeBoostTimestamp = "9999999999999";  // Large timestamp value for testing far future date
         const formattedBoostTimestamp = convertBoostTimestampToLocalTime(largeBoostTimestamp);
 
+        // Set Boost Status based on timestamp
+        const artifactBoostEnd = 1718192400000;  // Example timestamp (in ms) for boost end
+        const now = Date.now();
+        const boostStatus = now > artifactBoostEnd ? "Boost has ended." : "Boost is active!";
+        document.getElementById('boostStatus').innerText = `${boostStatus} (Ends at: ${formattedBoostTimestamp})`;
+
         // Replace markdown with HTML table and Boost Status
         document.getElementById("table1").innerHTML = table1HTML;
         document.getElementById("table2").innerHTML = table2HTML;
-
-        // Display formatted Boost Status time
-        document.getElementById('boostStatus').innerText = `Boost status active until: ${formattedBoostTimestamp}`;
     </script>
 
 </body>
