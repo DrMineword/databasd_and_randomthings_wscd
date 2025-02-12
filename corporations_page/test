@@ -20,7 +20,7 @@
     <h2>Small JSON Data</h2>
     <div class="json-block">
         <p><span class="json-string">${NAME}</span> | <img src="https://example.com/icon.png" width="20" height="20" alt="Icon"></p>
-        <p>-# ID: <span class="json-number">12345</span></p>
+        <p>ID: <span class="json-number">12345</span></p>
     </div>
 
     <h2>Saved Markdown Table 1 (Values Only)</h2>
