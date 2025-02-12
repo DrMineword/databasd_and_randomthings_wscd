@@ -89,22 +89,18 @@
     <script>
         // Markdown to HTML Table conversion function
         function convertMarkdownToHTML(markdown) {
-            // Convert markdown table into HTML table format
             const lines = markdown.split("\n").filter(line => line.trim() !== "");
             const headers = lines[0].split("|").map(header => header.trim()).slice(1, -1);
             const rows = lines.slice(2);
 
-            // Start table structure
             let tableHTML = "<table><thead><tr>";
 
-            // Add headers
             headers.forEach(header => {
                 tableHTML += `<th>${header}</th>`;
             });
 
             tableHTML += "</tr></thead><tbody>";
 
-            // Add rows
             rows.forEach(row => {
                 const cols = row.split("|").map(col => col.trim()).slice(1, -1);
                 tableHTML += "<tr>";
@@ -118,7 +114,7 @@
             return tableHTML;
         }
 
-        // Convert timestamp to local time (e.g., Discord-style <timestamp:unix_time>)
+        // Convert timestamps to local time (e.g., Discord-style <timestamp:unix_time>)
         function convertTimestampToLocalTime(markdown) {
             return markdown.replace(/<timestamp:(\d+)>/g, (match, unixTimestamp) => {
                 const localDate = new Date(parseInt(unixTimestamp));
@@ -133,7 +129,7 @@
             });
         }
 
-        // Convert Boost Timestamp to local time
+        // Convert Boost Timestamp to local time (testing large future timestamp)
         function convertBoostTimestampToLocalTime(timestamp) {
             const largeTimestamp = new Date(parseInt(timestamp));
             return `<t:${Math.floor(largeTimestamp.getTime() / 1000)}:F>`;
@@ -151,13 +147,14 @@
         table2HTML = convertLinksToHyperlinks(convertTimestampToLocalTime(table2HTML));
 
         // Handle Boost Status timestamp
-        const largeBoostTimestamp = "9999999999999";  // Large timestamp value for testing far future date
-        const formattedBoostTimestamp = convertBoostTimestampToLocalTime(largeBoostTimestamp);
-
-        // Set Boost Status based on timestamp
-        const artifactBoostEnd = 1718192400000;  // Example timestamp (in ms) for boost end
+        const artifactBoostEnd = 1718192400000;  // Correct Example timestamp for boost end (in ms)
         const now = Date.now();
+
+        // Set Boost Status based on timestamp (Check if boost has ended)
         const boostStatus = now > artifactBoostEnd ? "Boost has ended." : "Boost is active!";
+        const formattedBoostTimestamp = convertBoostTimestampToLocalTime(artifactBoostEnd);
+
+        // Update the Boost Status with the timestamp info
         document.getElementById('boostStatus').innerText = `${boostStatus} (Ends at: ${formattedBoostTimestamp})`;
 
         // Replace markdown with HTML table and Boost Status
