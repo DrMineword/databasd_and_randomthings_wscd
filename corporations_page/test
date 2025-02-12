@@ -55,8 +55,9 @@
 
     <h2>Small JSON Data</h2>
     <div class="json-block">
-        <p><span class="json-string">${NAME}</span> | <img src="https://cdn.discordapp.com/avatars/987284796789116949/20f2aebe59e1ff7029a5f50f19542b95.png" width="20" height="20" alt="Icon"></p>
+        <p><span class="json-string">${NAME}</span></p>
         <p>ID: <span class="json-number">12345</span></p>
+<p><img src="https://cdn.discordapp.com/avatars/987284796789116949/20f2aebe59e1ff7029a5f50f19542b95.png" width="50" height="50" alt="Icon"></p>
     </div>
 
     <h2>Saved Markdown Table 1 (Values Only)</h2>
