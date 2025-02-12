@@ -126,7 +126,14 @@
             });
         }
 
-        // Convert Markdown links [text](url) to <a href="url">text</a>
+        // Convert timestamps in boost status (can set a very large value for testing)
+        function convertBoostTimestampToLocalTime(timestamp) {
+            // Format a large timestamp (e.g., "9999999999999" which is far in the future)
+            const largeTimestamp = new Date(parseInt(timestamp));
+            return `<t:${Math.floor(largeTimestamp.getTime() / 1000)}:F>`; 
+        }
+
+        // Convert Links to Hyperlinks
         function convertLinksToHyperlinks(markdown) {
             return markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
                 return `<a href="${url}" target="_blank">${text}</a>`;
@@ -139,21 +146,21 @@
 
         // Convert the Markdown tables to HTML
         const table1HTML = convertMarkdownToHTML(table1Markdown);
-        const table2HTML = convertMarkdownToHTML(table2Markdown);
+        let table2HTML = convertMarkdownToHTML(table2Markdown);
 
         // Convert timestamps and links in the markdown
-        const table2HTMLWithLinks = convertLinksToHyperlinks(convertTimestampToLocalTime(table2HTML));
+        table2HTML = convertLinksToHyperlinks(convertTimestampToLocalTime(table2HTML));
 
-        // Replace markdown with HTML table
+        // Handle Boost Status timestamp
+        const largeBoostTimestamp = "9999999999999";  // Large timestamp value for testing far future date
+        const formattedBoostTimestamp = convertBoostTimestampToLocalTime(largeBoostTimestamp);
+
+        // Replace markdown with HTML table and Boost Status
         document.getElementById("table1").innerHTML = table1HTML;
-        document.getElementById("table2").innerHTML = table2HTMLWithLinks;
+        document.getElementById("table2").innerHTML = table2HTML;
 
-        // Example Unix timestamps (in milliseconds)
-        const artifactBoostEnd = 1718192400000; // Example timestamp
-        const now = Date.now();
-
-        document.getElementById('boostStatus').innerText =
-            now > artifactBoostEnd ? "Boost has ended." : "Boost is active!";
+        // Display formatted Boost Status time
+        document.getElementById('boostStatus').innerText = `Boost status active until: ${formattedBoostTimestamp}`;
     </script>
 
 </body>
