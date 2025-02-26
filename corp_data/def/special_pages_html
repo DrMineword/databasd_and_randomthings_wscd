@@ -141,78 +141,92 @@ a {
 
     <script>
         
-       function decodeBase64(base64String) {
-            return decodeURIComponent(escape(atob(base64String)));
-        }
+      function decodeBase64(base64String) {
+    return decodeURIComponent(escape(atob(base64String)));
+}
 
-        function checkArtefactBoost(endTime) {
-            const currentTime = Math.floor(Date.now() / 1000);
-            if (endTime > currentTime) {
-                return `Active, Will end on ${new Date(endTime * 1000).toUTCString()} UTC`;
+function checkArtefactBoost(endTime) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (endTime > currentTime) {
+        return `Active, Will end on ${new Date(endTime * 1000).toUTCString()} UTC`;
+    }
+    return "Inactive";
+}
+
+function loadRowsSlowly(rows, interval) {
+    let index = 0;
+    const totalRows = rows.length;
+    document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
+
+    const intervalId = setInterval(() => {
+        if (index >= totalRows) {
+            clearInterval(intervalId);
+            document.getElementById("loading-status").textContent = "Loading complete";
+            // Remove the <p> loadimg element here
+            const loadImgElement = document.getElementById("loading-status");
+            if (loadImgElement) {
+                loadImgElement.remove();
             }
-            return "Inactive";
+            return;
         }
+        document.getElementById("loading-status").textContent = `Loading: ${index + 1}/${totalRows}`;
+        document.getElementById("table-body").innerHTML += rows[index];
+        index++;
+    }, interval);
+}
 
-        function loadRowsSlowly(rows, interval) {
-            let index = 0;
-            const totalRows = rows.length;
-            document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
+function generateTableFromMarkdown(markdown) {
+    const lines = markdown.split("\n").filter(line => line.trim() !== "");
+    const headers = lines[0].split("|").map(h => h.trim()).slice(1, -1);
+    const rawRows = lines.slice(2);
 
-            const intervalId = setInterval(() => {
-                if (index >= totalRows) {
-                    clearInterval(intervalId);
-                    document.getElementById("loading-status").textContent = "Loading complete";
-                    return;
-                }
-                document.getElementById("loading-status").textContent = `Loading: ${index + 1}/${totalRows}`;
-                document.getElementById("table-body").innerHTML += rows[index];
-                index++;
-            }, interval);
-        }
+    let tableHTML = `<table><thead><tr>`;
+    headers.forEach(header => tableHTML += `<th>${header}</th>`);
+    tableHTML += `</tr></thead><tbody id="table-body"></tbody></table>`;
 
-        function generateTableFromMarkdown(markdown) {
-            const lines = markdown.split("\n").filter(line => line.trim() !== "");
-            const headers = lines[0].split("|").map(h => h.trim()).slice(1, -1);
-            const rawRows = lines.slice(2);
+    document.getElementById("table-container").innerHTML = tableHTML;
+    let formattedRows = [];
 
-            let tableHTML = `<table><thead><tr>`;
-            headers.forEach(header => tableHTML += `<th>${header}</th>`);
-            tableHTML += `</tr></thead><tbody id="table-body"></tbody></table>`;
-            
-            document.getElementById("table-container").innerHTML = tableHTML;
-            let formattedRows = [];
+    rawRows.forEach(row => {
+        const cols = row.split("|").map(col => col.trim()).slice(1, -1); // Remove leading and trailing spaces
 
-            rawRows.forEach(row => {
-                const cols = row.split("|").map(col => col.trim()).slice(1, -1);
-                let rowHTML = "<tr>";
+        let rowHTML = "<tr>";
 
-                let icon = `<img class='lazy-icon' data-src='${cols[0]}'>`;
-                let name = decodeBase64(cols[1]);
-                let name2 = cols[2];
-                let link = `<a href='${name2}' target='_self'>${name}</a>`;
-                let win = cols[3];
-                let loss = cols[4];
-                let draw = cols[5];
-                let elo = cols[6];
-                let id = cols[7];
-                let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "No Boost";
+        // Column 1: Icon
+        let iconUrl = cols[0];
+        let icon = `<img class='lazy-icon' data-src='${iconUrl}' onerror="this.onerror=null;this.src='data:image/png;base64, ...fallbackBase64Image...';">`;
+        
+        // Column 2: Name (decodeBase64)
+        let name = decodeBase64(cols[1]);
 
-                rowHTML += `<td>${icon}</td><td>${link}</td><td>${win}</td><td>${loss}</td><td>${draw}</td><td>${elo}</td><td>${id}</td><td>${artefactBoost}</td>`;
-                rowHTML += "</tr>";
+        // Remove Name2 completely from the row (columns[2] will not be used)
+        let link = `<a href='${cols[2]}' target='_self'>${name}</a>`;
 
-                formattedRows.push(rowHTML);
-            });
+        // Other columns (Win, Loss, Draw, Elo, Id, Artefact Boost)
+        let win = cols[3];
+        let loss = cols[4];
+        let draw = cols[5];
+        let elo = cols[6];
+        let id = cols[7];
+        let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "No Boost";
 
-            loadRowsSlowly(formattedRows, 200); // Load one row every 200ms
-        }
+        rowHTML += `<td>${icon}</td><td>${link}</td><td>${win}</td><td>${loss}</td><td>${draw}</td><td>${elo}</td><td>${id}</td><td>${artefactBoost}</td>`;
+        rowHTML += "</tr>";
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const markdownTable = `
+        formattedRows.push(rowHTML);
+    });
+
+    loadRowsSlowly(formattedRows, 200); // Load one row every 200ms
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const markdownTable = `
 $MDHERE
 `;
 
-            generateTableFromMarkdown(markdownTable);
-        });
+    generateTableFromMarkdown(markdownTable);
+});
+
 
 
 
