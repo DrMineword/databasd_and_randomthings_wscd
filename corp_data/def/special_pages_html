@@ -137,11 +137,30 @@ a {
     <h2>$NAMEHERE</h2>
     <p id="loading-status" class="loading-status">Loading: 0/0</p>
     <div id="table-container"></div>
+<md>
+$MDHERE
+</md>
 
 
     <script>
         
-      function decodeBase64(base64String) {
+      function loadMarkdownTable() {
+    document.addEventListener("DOMContentLoaded", () => {
+        // Find the <md> tag and get its markdown content
+        const markdown = document.querySelector('md').textContent.trim();
+
+        // Remove the <md> element from the DOM after extracting content
+        const mdElement = document.querySelector('md');
+        if (mdElement) {
+            mdElement.remove();
+        }
+
+        // Now, process the markdown content to generate the table
+        generateTableFromMarkdown(markdown);
+    });
+}
+
+function decodeBase64(base64String) {
     return decodeURIComponent(escape(atob(base64String)));
 }
 
@@ -222,26 +241,12 @@ function generateTableFromMarkdown(markdown) {
         formattedRows.push(rowHTML);
     });
 
-    loadRowsSlowly(formattedRows, 100); // Load 4 rows every 200ms
+    loadRowsSlowly(formattedRows, 200); // Load 4 rows every 200ms
 }
 
+// Call the function to load markdown table
+loadMarkdownTable();
 
-
-const markdownTable = `
-$MDHERE
-`;
-
-loadMarkdownTable(markdownTable);  // Trigger table generation with dynamic markdown content
-
-
-
-
-
-function loadMarkdownTable(markdown) {
-    document.addEventListener("DOMContentLoaded", () => {
-        generateTableFromMarkdown(markdown);
-    });
-}
 
 
 
