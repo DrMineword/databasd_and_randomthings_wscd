@@ -249,6 +249,12 @@ async function loadMarkdownTable() {
     }
 }
 
+function generateTableFromMarkdown(markdown) {
+    console.log("Processing markdown:", markdown);
+    // Implement markdown-to-table conversion here
+}
+
+
 function initializeLazyLoad() {
     console.log("Initializing lazy loading...");
 
