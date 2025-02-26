@@ -144,139 +144,52 @@ $MDHERE
 
     <script>
         
-      function loadMarkdownTable() {
-    document.addEventListener("DOMContentLoaded", () => {
-        console.log("DOMContentLoaded event triggered.");
-
-        // Find the <md> tag and get its markdown content
-        const mdElement = document.querySelector('md');
-        if (mdElement) {
-            console.log("<md> tag found. Extracting content...");
-            const markdown = mdElement.textContent.trim();
-            console.log("Markdown extracted: ", markdown);
-            
-            // Remove the <md> element from the DOM after extracting content
-            mdElement.remove();
-            console.log("<md> tag removed from the DOM.");
-            
-            // Now, process the markdown content to generate the table
-            generateTableFromMarkdown(markdown);
-        } else {
-            console.log("<md> tag not found.");
-        }
-    });
-}
-
-function decodeBase64(base64String) {
-    console.log("Decoding base64 string:", base64String);
-    try {
-        const decoded = decodeURIComponent(escape(atob(base64String)));
-        console.log("Decoded value:", decoded);
-        return decoded;
-    } catch (error) {
-        console.error("Error decoding base64:", error);
-        return base64String;
-    }
-}
-
-function checkArtefactBoost(endTime) {
-    const currentTime = Math.floor(Date.now() / 1000);
-    console.log("Current time:", currentTime, "Artefact end time:", endTime);
-
-    if (endTime > currentTime) {
-        const boostEndTime = new Date(endTime * 1000).toUTCString();
-        console.log(`Artefact boost is active, will end on ${boostEndTime}`);
-        return `Active, Will end on ${boostEndTime} UTC`;
-    }
-
-    console.log("Artefact boost is inactive.");
-    return "Inactive";
-}
-
-function loadRowsSlowly(rows, interval, batchSize = 4) {
-    let index = 0;
-    const totalRows = rows.length;
-    console.log(`Total rows to load: ${totalRows}`);
-    document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
-
-    const intervalId = setInterval(() => {
-        // Load `batchSize` rows at once
-        const endIndex = Math.min(index + batchSize, totalRows);
-        console.log(`Loading rows ${index + 1} to ${endIndex}`);
-
-        for (let i = index; i < endIndex; i++) {
-            document.getElementById("table-body").innerHTML += rows[i];
-        }
-
-        index = endIndex;
-        document.getElementById("loading-status").textContent = `Loading: ${index}/${totalRows}`;
-
-        if (index >= totalRows) {
-            clearInterval(intervalId);
-            console.log("All rows loaded.");
-            document.getElementById("loading-status").textContent = "Loading complete";
-            // Remove the <p> loadimg element here
-            const loadImgElement = document.getElementById("loading-status");
-            if (loadImgElement) {
-                loadImgElement.remove();
-                console.log("<p> loadimg element removed.");
-            }
-        }
-    }, interval);
-}
-
-
-async function loadMarkdownTable() {
-    console.log("Waiting for the DOM to be ready...");
+      async function loadMarkdownTable() {
+    console.log("%c[INFO] Waiting for the DOM to be ready...", "color: cyan; font-weight: bold;");
 
     await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure content is inserted
 
-    const mdElement = document.querySelector('md');
+    const mdElement = document.querySelector("md");
     if (mdElement) {
-        console.log("<md> tag found. Extracting content...");
+        console.log("%c[✔] <md> tag found. Extracting content...", "color: lime; font-weight: bold;");
         const markdown = mdElement.textContent.trim();
-        console.log("Markdown extracted: ", markdown);
+        console.log("%c[DATA] Markdown extracted: ", "color: orange; font-weight: bold;", markdown);
 
         mdElement.remove(); // Remove placeholder
-        console.log("<md> tag removed.");
+        console.log("%c[✔] <md> tag removed.", "color: lime; font-weight: bold;");
 
         generateTableFromMarkdown(markdown);
-        
+
         // Ensure lazy load runs again
         initializeLazyLoad();
     } else {
-        console.log("<md> tag not found.");
+        console.log("%c[✖] <md> tag not found.", "color: red; font-weight: bold;");
     }
 }
 
 function generateTableFromMarkdown(markdown) {
-    console.log("Processing markdown:", markdown);
-    // Implement markdown-to-table conversion here
+    console.log("%c[INFO] Processing markdown into table...", "color: cyan; font-weight: bold;");
+    // Implement markdown-to-table conversion logic here
 }
 
-
 function initializeLazyLoad() {
-    console.log("Initializing lazy loading...");
+    console.log("%c[INFO] Initializing lazy loading...", "color: cyan; font-weight: bold;");
 
     const lazyImages = document.querySelectorAll(".lazy-icon");
 
     lazyImages.forEach(img => {
         img.onerror = function () {
-            console.warn("Failed to load image:", img.dataset.src);
+            console.warn("%c[⚠] Failed to load image:", "color: yellow; font-weight: bold;", img.dataset.src);
             this.src = "https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png";
         };
         img.src = img.dataset.src; // Trigger image load
     });
 
-    console.log("Lazy loading applied to", lazyImages.length, "images.");
+    console.log("%c[✔] Lazy loading applied to " + lazyImages.length + " images.", "color: lime; font-weight: bold;");
 }
 
 // Call the function
 loadMarkdownTable();
-
-
-
-
 
 
 
