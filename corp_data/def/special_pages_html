@@ -214,6 +214,148 @@ $MDHERE
     }
 
     document.addEventListener("DOMContentLoaded", checkArtefactBoost);
+
+function remove_empty(delay, element) {
+    setTimeout(() => {
+        // Get all <p> elements inside the specified element
+        const paragraphs = document.querySelectorAll(element);
+        
+        paragraphs.forEach(p => {
+            // Check if the <p> element is empty
+            if (!p.innerHTML.trim()) {
+                p.remove(); // Remove the empty <p> element
+            }
+        });
+    }, delay);
+}
+
+// Usage example:
+remove_empty(3000, 'p'); // Removes empty <p> elements after 3 seconds
+
+
+
+async function name_icon(name_base64, icon_base64) {
+    try {
+        // Decode and set page title with proper encoding handling for unusual characters
+        const decodedTitle = decodeBase64(name_base64);
+        document.title = decodedTitle;
+
+        // Convert Base64 to Blob
+        const byteCharacters = atob(icon_base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "image/png" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Set favicon using Blob URL
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.head.appendChild(link);
+        }
+        link.href = blobUrl;
+
+    } catch (error) {
+        console.error("Error setting name or icon:", error);
+    }
+}
+
+// Helper function to decode Base64 properly for Unicode support
+function decodeBase64(base64) {
+    const binaryString = atob(base64);
+    const byteArray = new Uint8Array(binaryString.length);
+
+    // Convert binary string to Uint8Array
+    for (let i = 0; i < binaryString.length; i++) {
+        byteArray[i] = binaryString.charCodeAt(i);
+    }
+
+    // Decode the byte array using TextDecoder (to handle any Unicode characters)
+    const decoder = new TextDecoder("utf-8");
+    return decoder.decode(byteArray);
+}
+
+
+
+// colors
+
+function set_background(base64) {
+    const img = new Image();
+    img.src = "data:image/png;base64," + base64;
+    img.crossOrigin = "Anonymous";  
+
+    img.onload = function() {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        let colorCounts = {};
+        let step = 4 * Math.floor((canvas.width * canvas.height) / 500);
+
+        let uniqueColors = new Set();
+        for (let i = 0; i < pixels.length; i += step) {
+            let r = pixels[i];
+            let g = pixels[i + 1];
+            let b = pixels[i + 2];
+            uniqueColors.add(`${r},${g},${b}`);
+        }
+
+        uniqueColors = Array.from(uniqueColors).map(c => c.split(",").map(Number));
+
+        function rgbToHex([r, g, b]) {
+            return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+        }
+
+        function getContrastColor([r, g, b]) {
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 128 ? "#000000" : "#FFFFFF";
+        }
+
+        let colorIndex = 0;
+        let progress = 0;
+        let direction = 1;
+
+        function animateGradient() {
+            progress += direction * 0.002;
+            if (progress >= 1) {
+                progress = 0;
+                colorIndex = (colorIndex + 1) % uniqueColors.length;
+            }
+
+            let nextColorIndex = (colorIndex + 1) % uniqueColors.length;
+
+            function interpolateColor(colorA, colorB, factor) {
+                return colorA.map((c, i) => Math.round(c + (colorB[i] - c) * factor));
+            }
+
+            let interpolated1 = interpolateColor(uniqueColors[colorIndex], uniqueColors[nextColorIndex], progress);
+            let interpolated2 = interpolateColor(uniqueColors[(colorIndex + 2) % uniqueColors.length], uniqueColors[(nextColorIndex + 2) % uniqueColors.length], progress);
+
+            let bgColor1 = rgbToHex(interpolated1);
+            let bgColor2 = rgbToHex(interpolated2);
+            document.body.style.background = `linear-gradient(to right, ${bgColor1}, ${bgColor2})`;
+
+            // Removed logic to change h2 text color.
+            requestAnimationFrame(animateGradient);
+        }
+
+        animateGradient();
+    };
+}
+
+// colors
+
+$SCRIPT+HERE
     </script>
 </body>
 </html>
