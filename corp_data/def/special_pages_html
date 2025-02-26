@@ -12,11 +12,16 @@
             color: #dcdcdc;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #333;
-        }
+       #table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #333;
+    }
 
         th, td {
             padding: 10px;
