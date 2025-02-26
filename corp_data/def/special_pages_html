@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown Table with Lazy Loaded Icons</title>
+    <title></title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -203,7 +203,7 @@ md {
                 let draw = cols[5];
                 let elo = cols[6];
                 let id = cols[7];
-                let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "No Boost";
+                let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "Inactive";
 
                 rowHTML += `<td>${icon}</td><td>${link}</td><td>${win}</td><td>${loss}</td><td>${draw}</td><td>${elo}</td><td>${id}</td><td>${artefactBoost}</td>`;
                 rowHTML += "</tr>";
@@ -212,7 +212,7 @@ md {
             }
 
             // Use a function to load the rows asynchronously with a delay
-            await loadRowsSlowly(formattedRows, 200); // Load 4 rows every 200ms
+            await loadRowsSlowly(formattedRows, 90); // Load 4 rows every 200ms
         }
 
         // Function to load rows slowly
@@ -222,7 +222,7 @@ md {
             document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
 
             const intervalId = setInterval(() => {
-                const endIndex = Math.min(index + 4, totalRows);
+                const endIndex = Math.min(index + 3, totalRows);
 
                 for (let i = index; i < endIndex; i++) {
                     document.getElementById("table-body").innerHTML += rows[i];
