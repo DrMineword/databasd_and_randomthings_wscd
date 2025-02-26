@@ -401,6 +401,8 @@ function set_background(base64) {
 // colors
 
 $SCRIPT+HERE
+
+loadMarkdownTable()
     </script>
 </body>
 </html>
