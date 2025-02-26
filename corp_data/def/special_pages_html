@@ -225,59 +225,49 @@ function loadRowsSlowly(rows, interval, batchSize = 4) {
     }, interval);
 }
 
-function generateTableFromMarkdown(markdown) {
-    console.log("Generating table from markdown...");
 
-    const lines = markdown.split("\n").filter(line => line.trim() !== "");
-    const headers = lines[0].split("|").map(h => h.trim()).slice(1, -1);
-    const rawRows = lines.slice(2);
+async function loadMarkdownTable() {
+    console.log("Waiting for the DOM to be ready...");
 
-    console.log("Headers:", headers);
-    console.log("Raw rows:", rawRows);
+    await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure content is inserted
 
-    let tableHTML = `<table><thead><tr>`;
-    headers.forEach(header => tableHTML += `<th>${header}</th>`);
-    tableHTML += `</tr></thead><tbody id="table-body"></tbody></table>`;
+    const mdElement = document.querySelector('md');
+    if (mdElement) {
+        console.log("<md> tag found. Extracting content...");
+        const markdown = mdElement.textContent.trim();
+        console.log("Markdown extracted: ", markdown);
 
-    document.getElementById("table-container").innerHTML = tableHTML;
-    let formattedRows = [];
+        mdElement.remove(); // Remove placeholder
+        console.log("<md> tag removed.");
 
-    rawRows.forEach(row => {
-        console.log("Processing row:", row);
-        const cols = row.split("|").map(col => col.trim()).slice(1, -1); // Remove leading and trailing spaces
-
-        let rowHTML = "<tr>";
-
-        // Column 1: Icon
-        let iconUrl = cols[0];
-        console.log("Icon URL:", iconUrl);
-        let icon = `<img class="lazy-icon" data-src="${iconUrl}" src="${iconUrl}" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png';">`;
-
-        // Column 2: Name (decodeBase64)
-        let name = decodeBase64(cols[1]);
-
-        // Remove Name2 completely from the row (columns[2] will not be used)
-        let link = `<a href='${cols[2]}' target='_self'>${name}</a>`;
-
-        // Other columns (Win, Loss, Draw, Elo, Id, Artefact Boost)
-        let win = cols[3];
-        let loss = cols[4];
-        let draw = cols[5];
-        let elo = cols[6];
-        let id = cols[7];
-        let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "No Boost";
-
-        rowHTML += `<td>${icon}</td><td>${link}</td><td>${win}</td><td>${loss}</td><td>${draw}</td><td>${elo}</td><td>${id}</td><td>${artefactBoost}</td>`;
-        rowHTML += "</tr>";
-
-        formattedRows.push(rowHTML);
-    });
-
-    loadRowsSlowly(formattedRows, 200); // Load 4 rows every 200ms
+        generateTableFromMarkdown(markdown);
+        
+        // Ensure lazy load runs again
+        initializeLazyLoad();
+    } else {
+        console.log("<md> tag not found.");
+    }
 }
 
-// Call the function to load markdown table
+function initializeLazyLoad() {
+    console.log("Initializing lazy loading...");
+
+    const lazyImages = document.querySelectorAll(".lazy-icon");
+
+    lazyImages.forEach(img => {
+        img.onerror = function () {
+            console.warn("Failed to load image:", img.dataset.src);
+            this.src = "https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png";
+        };
+        img.src = img.dataset.src; // Trigger image load
+    });
+
+    console.log("Lazy loading applied to", lazyImages.length, "images.");
+}
+
+// Call the function
 loadMarkdownTable();
+
 
 
 
