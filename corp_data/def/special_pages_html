@@ -144,116 +144,48 @@ $MDHERE
 
     <script>
         
-     async function loadMarkdownTable() {
-    console.log("%c[INFO] Waiting for the DOM to be ready...", "color: cyan; font-weight: bold;");
+    function generateTableFromMarkdown(markdown) {
+    console.log("%c[INFO] Processing markdown into table...", "color: cyan; font-weight: bold;");
 
-    document.addEventListener("DOMContentLoaded", async () => {
-        console.log("%c[✔] DOMContentLoaded event triggered.", "color: lime; font-weight: bold;");
-
-        const mdElement = document.querySelector("md");
-        if (mdElement) {
-            console.log("%c[✔] <md> tag found. Extracting content...", "color: lime; font-weight: bold;");
-            const markdown = mdElement.textContent.trim();
-            console.log("%c[DATA] Markdown extracted: ", "color: orange; font-weight: bold;", markdown);
-
-            mdElement.remove(); // Remove placeholder
-            console.log("%c[✔] <md> tag removed.", "color: lime; font-weight: bold;");
-
-            generateTableFromMarkdown(markdown);
-
-            // Ensure lazy load runs again
-            initializeLazyLoad();
-        } else {
-            console.log("%c[✖] <md> tag not found.", "color: red; font-weight: bold;");
-        }
-    });
-}
-
-function decodeBase64(base64String) {
-    console.log("%c[INFO] Decoding base64 string:", "color: cyan; font-weight: bold;", base64String);
-    try {
-        const decoded = decodeURIComponent(escape(atob(base64String)));
-        console.log("%c[✔] Decoded value:", "color: lime; font-weight: bold;", decoded);
-        return decoded;
-    } catch (error) {
-        console.error("%c[✖] Error decoding base64:", "color: red; font-weight: bold;", error);
-        return base64String;
+    if (!markdown) {
+        console.error("%c[✖] Markdown content is EMPTY. Check the <md> tag.", "color: red; font-weight: bold;");
+        return;
     }
-}
-
-function checkArtefactBoost(endTime) {
-    const currentTime = Math.floor(Date.now() / 1000);
-    console.log("%c[INFO] Checking Artefact Boost:", "color: cyan; font-weight: bold;", {
-        currentTime,
-        endTime,
-    });
-
-    if (endTime > currentTime) {
-        const boostEndTime = new Date(endTime * 1000).toUTCString();
-        console.log(`%c[✔] Artefact boost is active, will end on ${boostEndTime}`, "color: lime; font-weight: bold;");
-        return `Active, Will end on ${boostEndTime} UTC`;
-    }
-
-    console.log("%c[✖] Artefact boost is inactive.", "color: red; font-weight: bold;");
-    return "Inactive";
-}
-
-function loadRowsSlowly(rows, interval, batchSize = 4) {
-    let index = 0;
-    const totalRows = rows.length;
-    console.log(`%c[INFO] Total rows to load: ${totalRows}`, "color: cyan; font-weight: bold;");
-    document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
-
-    const intervalId = setInterval(() => {
-        const endIndex = Math.min(index + batchSize, totalRows);
-        console.log(`%c[✔] Loading rows ${index + 1} to ${endIndex}`, "color: lime; font-weight: bold;");
-
-        for (let i = index; i < endIndex; i++) {
-            document.getElementById("table-body").innerHTML += rows[i];
-        }
-
-        index = endIndex;
-        document.getElementById("loading-status").textContent = `Loading: ${index}/${totalRows}`;
-
-        if (index >= totalRows) {
-            clearInterval(intervalId);
-            console.log("%c[✔] All rows loaded.", "color: lime; font-weight: bold;");
-            document.getElementById("loading-status").textContent = "Loading complete";
-
-            const loadImgElement = document.getElementById("loading-status");
-            if (loadImgElement) {
-                loadImgElement.remove();
-                console.log("%c[✔] <p> loading-status element removed.", "color: lime; font-weight: bold;");
-            }
-        }
-    }, interval);
-}
-
-function generateTableFromMarkdown(markdown) {
-    console.log("%c[INFO] Generating table from markdown...", "color: cyan; font-weight: bold;");
 
     const lines = markdown.split("\n").filter(line => line.trim() !== "");
+    console.log("%c[DATA] Markdown Lines:", "color: orange; font-weight: bold;", lines);
+
+    if (lines.length < 3) {
+        console.error("%c[✖] Invalid Markdown format. Not enough lines to form a table.", "color: red; font-weight: bold;");
+        return;
+    }
+
     const headers = lines[0].split("|").map(h => h.trim()).slice(1, -1);
     const rawRows = lines.slice(2);
 
     console.log("%c[DATA] Headers:", "color: orange; font-weight: bold;", headers);
     console.log("%c[DATA] Raw rows:", "color: orange; font-weight: bold;", rawRows);
 
+    if (!document.getElementById("table-container")) {
+        console.error("%c[✖] #table-container is missing in the HTML. Table cannot be generated.", "color: red; font-weight: bold;");
+        return;
+    }
+
     let tableHTML = `<table><thead><tr>`;
     headers.forEach(header => tableHTML += `<th>${header}</th>`);
     tableHTML += `</tr></thead><tbody id="table-body"></tbody></table>`;
 
+    console.log("%c[✔] Table is being inserted into #table-container", "color: lime; font-weight: bold;");
     document.getElementById("table-container").innerHTML = tableHTML;
+
     let formattedRows = [];
 
-    rawRows.forEach(row => {
-        console.log("%c[✔] Processing row:", "color: lime; font-weight: bold;", row);
+    rawRows.forEach((row, index) => {
+        console.log(`%c[✔] Processing row ${index + 1}:`, "color: lime; font-weight: bold;", row);
         const cols = row.split("|").map(col => col.trim()).slice(1, -1);
 
         let rowHTML = "<tr>";
-
         let iconUrl = cols[0];
-        console.log("%c[DATA] Icon URL:", "color: orange; font-weight: bold;", iconUrl);
         let icon = `<img class="lazy-icon" data-src="${iconUrl}" src="${iconUrl}" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png';">`;
 
         let name = decodeBase64(cols[1]);
@@ -272,28 +204,9 @@ function generateTableFromMarkdown(markdown) {
         formattedRows.push(rowHTML);
     });
 
+    console.log("%c[✔] Rows processed. Starting slow load...", "color: lime; font-weight: bold;");
     loadRowsSlowly(formattedRows, 200);
 }
-
-function initializeLazyLoad() {
-    console.log("%c[INFO] Initializing lazy loading...", "color: cyan; font-weight: bold;");
-
-    const lazyImages = document.querySelectorAll(".lazy-icon");
-
-    lazyImages.forEach(img => {
-        img.onerror = function () {
-            console.warn("%c[⚠] Failed to load image:", "color: yellow; font-weight: bold;", img.dataset.src);
-            this.src = "https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png";
-        };
-        img.src = img.dataset.src;
-    });
-
-    console.log("%c[✔] Lazy loading applied to " + lazyImages.length + " images.", "color: lime; font-weight: bold;");
-}
-
-// Call the function
-loadMarkdownTable();
-
 
 
 
