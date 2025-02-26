@@ -34,6 +34,103 @@
             height: 32px;
             background-color: #666;
         }
+
+     body { 
+    font-family: Arial, sans-serif; 
+    margin: 20px; 
+    background-color: #1e1e1e; 
+    color: #dcdcdc; 
+}
+
+h2 { 
+    color: #ffcc00; 
+    background-color: #444; /* Gray background */
+    border: 2px solid #666; /* Gray border */
+    padding: 5px; /* Padding around the text */
+    border-radius: 5px; /* Rounded corners */
+}
+
+p {
+    background-color: #444; /* Gray background */
+    border: 2px solid #666; /* Gray border */
+    padding: 5px; /* Padding around the text */
+    border-radius: 5px; /* Rounded corners */
+}
+
+pre { 
+    background-color: #252526; 
+    padding: 10px; 
+    border-radius: 5px; 
+    white-space: pre-wrap; 
+    word-wrap: break-word; 
+    font-size: 14px; 
+}
+
+.json-block { 
+    background-color: #2d2d2d; 
+    padding: 10px; 
+    border-radius: 5px; 
+    font-family: monospace; 
+}
+
+.json-key { 
+    color: #9cdcfe; 
+}
+
+.json-string { 
+    color: #ce9178; 
+}
+
+.json-number {
+    color: #b5cea8;
+    font-size: clamp(12px, 4vw, 18px); /* Adjusts size between 12px and 18px based on viewport width */
+    word-wrap: break-word; /* Ensures long numbers break onto the next line */
+    overflow-wrap: break-word;
+    max-width: 100%; /* Prevents overflow */
+}
+
+a { 
+    color: #4ea9ff; 
+    text-decoration: none; 
+}
+
+/* Style for Tables */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #333;
+}
+
+table, th, td {
+    border: 1px solid #666;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #444;
+    color: #fff;
+}
+
+td {
+    background-color: #2d2d2d;
+    color: #dcdcdc;
+}
+
+a {
+    color: #4ea9ff;
+    text-decoration: none;
+}
+
+    
     </style>
 </head>
 <body>
