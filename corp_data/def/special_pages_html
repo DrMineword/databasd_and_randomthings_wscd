@@ -225,13 +225,24 @@ function generateTableFromMarkdown(markdown) {
     loadRowsSlowly(formattedRows, 100); // Load 4 rows every 200ms
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const markdownTable = `
+
+
+const markdownTable = `
 $MDHERE
 `;
 
-    generateTableFromMarkdown(markdownTable);
-});
+loadMarkdownTable(markdownTable);  // Trigger table generation with dynamic markdown content
+
+
+
+
+
+function loadMarkdownTable(markdown) {
+    document.addEventListener("DOMContentLoaded", () => {
+        generateTableFromMarkdown(markdown);
+    });
+}
+
 
 
 
