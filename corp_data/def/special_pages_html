@@ -144,71 +144,108 @@ $MDHERE
 
     <script>
         
-    function generateTableFromMarkdown(markdown) {
-    console.log("%c[INFO] Processing markdown into table...", "color: cyan; font-weight: bold;");
+    function decodeBase64(base64String) {
+            try {
+                const decoded = decodeURIComponent(escape(atob(base64String)));
+                return decoded;
+            } catch (error) {
+                console.error("Error decoding base64:", error);
+                return base64String;
+            }
+        }
 
-    if (!markdown) {
-        console.error("%c[✖] Markdown content is EMPTY. Check the <md> tag.", "color: red; font-weight: bold;");
-        return;
-    }
+        // Function to check if artefact boost is active
+        function checkArtefactBoost(endTime) {
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (endTime > currentTime) {
+                const boostEndTime = new Date(endTime * 1000).toUTCString();
+                return `Active, Will end on ${boostEndTime} UTC`;
+            }
+            return "Inactive";
+        }
 
-    const lines = markdown.split("\n").filter(line => line.trim() !== "");
-    console.log("%c[DATA] Markdown Lines:", "color: orange; font-weight: bold;", lines);
+        // Function to load rows with a delay (lazy loading)
+        function loadRowsSlowly(rows, interval, batchSize = 4) {
+            let index = 0;
+            const totalRows = rows.length;
+            document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
 
-    if (lines.length < 3) {
-        console.error("%c[✖] Invalid Markdown format. Not enough lines to form a table.", "color: red; font-weight: bold;");
-        return;
-    }
+            const intervalId = setInterval(() => {
+                const endIndex = Math.min(index + batchSize, totalRows);
+                for (let i = index; i < endIndex; i++) {
+                    document.getElementById("table-body").innerHTML += rows[i];
+                }
 
-    const headers = lines[0].split("|").map(h => h.trim()).slice(1, -1);
-    const rawRows = lines.slice(2);
+                index = endIndex;
+                document.getElementById("loading-status").textContent = `Loading: ${index}/${totalRows}`;
 
-    console.log("%c[DATA] Headers:", "color: orange; font-weight: bold;", headers);
-    console.log("%c[DATA] Raw rows:", "color: orange; font-weight: bold;", rawRows);
+                if (index >= totalRows) {
+                    clearInterval(intervalId);
+                    document.getElementById("loading-status").textContent = "Loading complete";
+                }
+            }, interval);
+        }
 
-    if (!document.getElementById("table-container")) {
-        console.error("%c[✖] #table-container is missing in the HTML. Table cannot be generated.", "color: red; font-weight: bold;");
-        return;
-    }
+        // Function to process the markdown and generate table
+        function generateTableFromMarkdown(markdown) {
+            const lines = markdown.split("\n").filter(line => line.trim() !== "");
+            const headers = lines[0].split("|").map(h => h.trim()).slice(1, -1);
+            const rawRows = lines.slice(2);
 
-    let tableHTML = `<table><thead><tr>`;
-    headers.forEach(header => tableHTML += `<th>${header}</th>`);
-    tableHTML += `</tr></thead><tbody id="table-body"></tbody></table>`;
+            let tableHTML = `<table><thead><tr>`;
+            headers.forEach(header => tableHTML += `<th>${header}</th>`);
+            tableHTML += `</tr></thead><tbody id="table-body"></tbody></table>`;
 
-    console.log("%c[✔] Table is being inserted into #table-container", "color: lime; font-weight: bold;");
-    document.getElementById("table-container").innerHTML = tableHTML;
+            document.getElementById("table-container").innerHTML = tableHTML;
 
-    let formattedRows = [];
+            let formattedRows = [];
+            rawRows.forEach(row => {
+                const cols = row.split("|").map(col => col.trim()).slice(1, -1);
+                let rowHTML = "<tr>";
 
-    rawRows.forEach((row, index) => {
-        console.log(`%c[✔] Processing row ${index + 1}:`, "color: lime; font-weight: bold;", row);
-        const cols = row.split("|").map(col => col.trim()).slice(1, -1);
+                // Column 1: Icon
+                let iconUrl = cols[0];
+                let icon = `<img class="lazy-icon" data-src="${iconUrl}" src="${iconUrl}" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png';">`;
 
-        let rowHTML = "<tr>";
-        let iconUrl = cols[0];
-        let icon = `<img class="lazy-icon" data-src="${iconUrl}" src="${iconUrl}" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png';">`;
+                // Column 2: Name (decodeBase64)
+                let name = decodeBase64(cols[1]);
 
-        let name = decodeBase64(cols[1]);
-        let link = `<a href='${cols[2]}' target='_self'>${name}</a>`;
+                // Column 3: Link
+                let link = `<a href='${cols[2]}' target='_self'>${name}</a>`;
 
-        let win = cols[3];
-        let loss = cols[4];
-        let draw = cols[5];
-        let elo = cols[6];
-        let id = cols[7];
-        let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "No Boost";
+                // Other columns: Win, Loss, Draw, Elo, Id, Artefact Boost
+                let win = cols[3];
+                let loss = cols[4];
+                let draw = cols[5];
+                let elo = cols[6];
+                let id = cols[7];
+                let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "No Boost";
 
-        rowHTML += `<td>${icon}</td><td>${link}</td><td>${win}</td><td>${loss}</td><td>${draw}</td><td>${elo}</td><td>${id}</td><td>${artefactBoost}</td>`;
-        rowHTML += "</tr>";
+                rowHTML += `<td>${icon}</td><td>${link}</td><td>${win}</td><td>${loss}</td><td>${draw}</td><td>${elo}</td><td>${id}</td><td>${artefactBoost}</td>`;
+                rowHTML += "</tr>";
 
-        formattedRows.push(rowHTML);
-    });
+                formattedRows.push(rowHTML);
+            });
 
-    console.log("%c[✔] Rows processed. Starting slow load...", "color: lime; font-weight: bold;");
-    loadRowsSlowly(formattedRows, 200);
-}
+            loadRowsSlowly(formattedRows, 200);
+        }
 
+        // Function to load markdown table
+        function loadMarkdownTable() {
+            document.addEventListener("DOMContentLoaded", () => {
+                const mdElement = document.querySelector('md');
+                if (mdElement) {
+                    const markdown = mdElement.textContent.trim();
+                    mdElement.remove(); // Remove the <md> tag after extracting content
+                    generateTableFromMarkdown(markdown);
+                } else {
+                    console.log("<md> tag not found.");
+                }
+            });
+        }
 
+        // Run the function to load markdown table
+        loadMarkdownTable();
 
 
 
