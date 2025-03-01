@@ -217,7 +217,7 @@ md {
             }
 
             // Use a function to load the rows asynchronously with a delay
-            await loadRowsSlowly(formattedRows, 300); // Load 4 rows every 200ms
+            await loadRowsSlowly(formattedRows, 150); // Load 4 rows every 200ms
         }
 
         // Function to load rows slowly
@@ -227,7 +227,7 @@ md {
             document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
 
             const intervalId = setInterval(() => {
-                const endIndex = Math.min(index + 500, totalRows);
+                const endIndex = Math.min(index + 150, totalRows);
 
                 for (let i = index; i < endIndex; i++) {
                     document.getElementById("table-body").innerHTML += rows[i];
