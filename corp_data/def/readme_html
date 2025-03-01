@@ -42,4 +42,7 @@
 </div>
 
 
-</body></html>
+</body>
+<script>
+$SCRIPT+HERE
+</script></html>
