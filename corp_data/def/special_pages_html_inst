@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+        }
+
+       #table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #333;
+    }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #666;
+        }
+
+        th {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .lazy-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #666;
+        }
+
+     body { 
+    font-family: Arial, sans-serif; 
+    margin: 20px; 
+    background-color: #1e1e1e; 
+    color: #dcdcdc; 
+}
+
+h2 { 
+    color: #ffcc00; 
+    background-color: #444; /* Gray background */
+    border: 2px solid #666; /* Gray border */
+    padding: 5px; /* Padding around the text */
+    border-radius: 5px; /* Rounded corners */
+}
+
+p {
+    background-color: #444; /* Gray background */
+    border: 2px solid #666; /* Gray border */
+    padding: 5px; /* Padding around the text */
+    border-radius: 5px; /* Rounded corners */
+}
+
+pre { 
+    background-color: #252526; 
+    padding: 10px; 
+    border-radius: 5px; 
+    white-space: pre-wrap; 
+    word-wrap: break-word; 
+    font-size: 14px; 
+}
+
+.json-block { 
+    background-color: #2d2d2d; 
+    padding: 10px; 
+    border-radius: 5px; 
+    font-family: monospace; 
+}
+
+.json-key { 
+    color: #9cdcfe; 
+}
+
+.json-string { 
+    color: #ce9178; 
+}
+
+.json-number {
+    color: #b5cea8;
+    font-size: clamp(12px, 4vw, 18px); /* Adjusts size between 12px and 18px based on viewport width */
+    word-wrap: break-word; /* Ensures long numbers break onto the next line */
+    overflow-wrap: break-word;
+    max-width: 100%; /* Prevents overflow */
+}
+
+a { 
+    color: #4ea9ff; 
+    text-decoration: none; 
+}
+
+/* Style for Tables */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #333;
+}
+
+table, th, td {
+    border: 1px solid #666;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #444;
+    color: #fff;
+}
+
+td {
+    background-color: #2d2d2d;
+    color: #dcdcdc;
+}
+
+a {
+    color: #4ea9ff;
+    text-decoration: none;
+}
+md {
+        display: block;
+        background-color: #2f3136; /* Dark background color */
+        color: #dcddde; /* Light text color */
+        border: 1px solid #4f545c; /* Border color */
+        border-radius: 8px; /* Rounded corners */
+        padding: 10px 15px; /* Padding inside the box */
+        font-family: 'Arial', sans-serif; /* Font style */
+        font-size: 14px; /* Font size */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+        margin-bottom: 15px; /* Space below the box */
+        white-space: pre-wrap; /* Preserve line breaks */
+        word-wrap: break-word; /* Ensure long words break onto the next line */
+    }
+    </style>
+</head>
+<body>
+    <h2>$NAMEHERE</h2>
+    <p id="loading-status" class="loading-status">Loading: 0/0</p>
+    <div id="table-container"></div>
+    <md>$MDHERE</md>
+
+    <script>
+        // Asynchronous function to load the markdown table
+        async function loadMarkdownTable() {
+            console.log("Loading table...");
+            const mdElement = document.querySelector('md');
+            if (!mdElement) {
+                console.log("<md> tag not found.");
+                return;
+            }
+            
+            // Extract markdown content and remove the <md> tag
+            const markdown = mdElement.textContent.trim();
+            mdElement.remove();
+            console.log("Markdown extracted:", markdown);
+            
+            // Generate table based on markdown content
+            await generateTableFromMarkdown(markdown);
+        }
+
+        // Function to generate the table asynchronously
+        async function generateTableFromMarkdown(markdown) {
+            const lines = markdown.split("\n").filter(line => line.trim() !== "");
+            const headers = lines[0].split("|").map(h => h.trim()).slice(1, -1);
+            const rawRows = lines.slice(2);
+
+            let tableHTML = `<table><thead><tr>`;
+            headers.forEach(header => tableHTML += `<th>${header}</th>`);
+            tableHTML += `</tr></thead><tbody id="table-body"></tbody></table>`;
+            
+            document.getElementById("table-container").innerHTML = tableHTML;
+
+            let formattedRows = [];
+
+            for (const row of rawRows) {
+                const cols = row.split("|").map(col => col.trim()).slice(1, -1);
+
+                let rowHTML = "<tr>";
+
+                // Icon column (lazy load)
+                let iconUrl = cols[0];
+                let icon = `<img class="lazy-icon" data-src="${iconUrl}" src="${iconUrl}" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corp_data/def/favicon.png';">`;
+
+                // Name column (decode Base64)
+                let name = decodeBase64(cols[1]);
+                let link = `<a href='${cols[2]}' target='_self'>${name}</a>`;
+
+                // Other columns
+                let win = cols[3];
+                let loss = cols[4];
+                let draw = cols[5];
+                let elo = cols[6];
+                let id = cols[7];
+                let artefactBoost = cols[8].includes("art_boost") ? checkArtefactBoost(parseInt(cols[8].match(/\d+/)[0])) : "Inactive";
+
+                rowHTML += `<td>${icon}</td><td>${link}</td><td>${win}</td><td>${loss}</td><td>${draw}</td><td>${elo}</td><td>${id}</td><td>${artefactBoost}</td>`;
+                rowHTML += "</tr>";
+
+                formattedRows.push(rowHTML);
+            }
+
+            // Use a function to load the rows asynchronously with a delay
+            await loadRowsSlowly(formattedRows, 300); // Load 4 rows every 200ms
+        }
+
+        // Function to load rows slowly
+        async function loadRowsSlowly(rows, interval) {
+            let index = 0;
+            const totalRows = rows.length;
+            document.getElementById("loading-status").textContent = `Loading: 0/${totalRows}`;
+
+            const intervalId = setInterval(() => {
+                const endIndex = Math.min(index + 500, totalRows);
+
+                for (let i = index; i < endIndex; i++) {
+                    document.getElementById("table-body").innerHTML += rows[i];
+                }
+
+                index = endIndex;
+                document.getElementById("loading-status").textContent = `Loading: ${index}/${totalRows}`;
+
+                if (index >= totalRows) {
+                    clearInterval(intervalId);
+                    document.getElementById("loading-status").textContent = "Loading complete";
+                    const loadImgElement = document.getElementById("loading-status");
+                    if (loadImgElement) {
+                        loadImgElement.remove();
+                    }
+                }
+            }, interval);
+        }
+
+        // Function to decode Base64
+        function decodeBase64(base64String) {
+            try {
+                const decoded = decodeURIComponent(escape(atob(base64String)));
+                return decoded;
+            } catch (error) {
+                console.error("Error decoding base64:", error);
+                return base64String;
+            }
+        }
+
+        // Check artifact boost status
+        function checkArtefactBoost(endTime) {
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (endTime > currentTime) {
+                const boostEndTime = new Date(endTime * 1000).toUTCString();
+                return `Active, Will end on ${boostEndTime} UTC`;
+            }
+            return "Inactive";
+        }
+
+        // Wait for DOM content to load, then call loadMarkdownTable asynchronously
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadMarkdownTable();
+        });
+
+
+
+
+
+
+function remove_empty(delay, element) {
+    setTimeout(() => {
+        // Get all <p> elements inside the specified element
+        const paragraphs = document.querySelectorAll(element);
+        
+        paragraphs.forEach(p => {
+            // Check if the <p> element is empty
+            if (!p.innerHTML.trim()) {
+                p.remove(); // Remove the empty <p> element
+            }
+        });
+    }, delay);
+}
+
+// Usage example:
+remove_empty(3000, 'p'); // Removes empty <p> elements after 3 seconds
+
+
+
+async function name_icon(name_base64, icon_base64) {
+    try {
+        // Decode and set page title with proper encoding handling for unusual characters
+        const decodedTitle = decodeBase64(name_base64);
+        document.title = decodedTitle;
+
+        // Convert Base64 to Blob
+        const byteCharacters = atob(icon_base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "image/png" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Set favicon using Blob URL
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.head.appendChild(link);
+        }
+        link.href = blobUrl;
+
+    } catch (error) {
+        console.error("Error setting name or icon:", error);
+    }
+}
+
+// Helper function to decode Base64 properly for Unicode support
+function decodeBase64(base64) {
+    const binaryString = atob(base64);
+    const byteArray = new Uint8Array(binaryString.length);
+
+    // Convert binary string to Uint8Array
+    for (let i = 0; i < binaryString.length; i++) {
+        byteArray[i] = binaryString.charCodeAt(i);
+    }
+
+    // Decode the byte array using TextDecoder (to handle any Unicode characters)
+    const decoder = new TextDecoder("utf-8");
+    return decoder.decode(byteArray);
+}
+
+
+
+// colors
+
+function set_background(base64) {
+    const img = new Image();
+    img.src = "data:image/png;base64," + base64;
+    img.crossOrigin = "Anonymous";  
+
+    img.onload = function() {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        let colorCounts = {};
+        let step = 4 * Math.floor((canvas.width * canvas.height) / 500);
+
+        let uniqueColors = new Set();
+        for (let i = 0; i < pixels.length; i += step) {
+            let r = pixels[i];
+            let g = pixels[i + 1];
+            let b = pixels[i + 2];
+            uniqueColors.add(`${r},${g},${b}`);
+        }
+
+        uniqueColors = Array.from(uniqueColors).map(c => c.split(",").map(Number));
+
+        function rgbToHex([r, g, b]) {
+            return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+        }
+
+        function getContrastColor([r, g, b]) {
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 128 ? "#000000" : "#FFFFFF";
+        }
+
+        let colorIndex = 0;
+        let progress = 0;
+        let direction = 1;
+
+        function animateGradient() {
+            progress += direction * 0.002;
+            if (progress >= 1) {
+                progress = 0;
+                colorIndex = (colorIndex + 1) % uniqueColors.length;
+            }
+
+            let nextColorIndex = (colorIndex + 1) % uniqueColors.length;
+
+            function interpolateColor(colorA, colorB, factor) {
+                return colorA.map((c, i) => Math.round(c + (colorB[i] - c) * factor));
+            }
+
+            let interpolated1 = interpolateColor(uniqueColors[colorIndex], uniqueColors[nextColorIndex], progress);
+            let interpolated2 = interpolateColor(uniqueColors[(colorIndex + 2) % uniqueColors.length], uniqueColors[(nextColorIndex + 2) % uniqueColors.length], progress);
+
+            let bgColor1 = rgbToHex(interpolated1);
+            let bgColor2 = rgbToHex(interpolated2);
+            document.body.style.background = `linear-gradient(to right, ${bgColor1}, ${bgColor2})`;
+
+            // Removed logic to change h2 text color.
+            requestAnimationFrame(animateGradient);
+        }
+
+        animateGradient();
+    };
+}
+
+// colors
+
+$SCRIPT+HERE
+
+loadMarkdownTable()
+    </script>
+</body>
+</html>
