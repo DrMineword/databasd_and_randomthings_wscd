@@ -35,11 +35,91 @@
 
 <body cz-shortcut-listen="true">
 <div>
-    <h1>Example Domain</h1>
-    <p>This domain is for use in illustrative examples in documents. You may use this
-    domain in literature without prior coordination or asking for permission.</p>
-    <p><a href="https://www.iana.org/domains/example">More information...</a></p>
+	<h1><center>wscd/Corporation Pages</center></h1>
+	<p>Welcome to wscd/Corporation Pages, here you will find corporate pages updated hourly
+		<br>
+		<br>
+		<br>Yes, that's all, because I have no idea how or what put in this page<br>
+</p>
+</div><br>
+<div>
+    <h1><center>Helpful Links</center></h1>
+
+    <!-- Corporation List - Normal -->
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/n/list_asc/true">Corporation List (Normal, Ascending)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/n/list_asc/false">Corporation List (Normal, Descending)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/n/win/top">Corporation List (Normal, Top Wins)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/n/lose/top">Corporation List (Normal, Top Losses)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/n/elo/top">Corporation List (Normal, Top ELO)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/n/elo/bottom">Corporation List (Normal, Bottom ELO)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/n/draw/top">Corporation List (Normal, Top Draws)</a>
+    </p>
+
+    <!-- Corporation List - Lite -->
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/lite/list_asc/true">Corporation List (Lite, Ascending)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/lite/list_asc/false">Corporation List (Lite, Descending)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/lite/win/top">Corporation List (Lite, Top Wins)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/lite/lose/top">Corporation List (Lite, Top Losses)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/lite/elo/top">Corporation List (Lite, Top ELO)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/lite/elo/bottom">Corporation List (Lite, Bottom ELO)</a>
+    </p>
+    <p>
+        <a href="https://drmineword.github.io/Artefact-Boost-Active/root/pages/corppages?id=pages/lite/draw/top">Corporation List (Lite, Top Draws)</a>
+    </p>
 </div>
+<div>
+    <h1><center>Big Thanks!</center></h1>
+    <center><p>We would like to give a huge thank you to:</p>
+    <ul>
+        <li>
+            <strong><a href="https://ws.tsl.rocks/" target="_blank">Hades' Star Community Data</a></strong> for providing invaluable data and support for this project. 
+            <br>
+            Made by <strong>CapricanDRJ</strong>
+            <br>
+            <img src="https://cdn.discordapp.com/avatars/454459089720967168/a_473b9e16d64a9a03f1d6449bed118e3f.gif?size=4096" alt="CapricanDRJ" width="40" height="40">
+        </li>
+        <li>
+            <strong><a href="https://ws.mentalisit.myds.me/" target="_blank">API: Mentalisit</a></strong> for the fantastic API that powers a lot of our features.
+            <br>
+            Made by <strong>mentalisit</strong>
+            <br>
+            <img src="https://cdn.discordapp.com/avatars/582882137842122773/c41d183fba78b9f49bb590a1fc8e33a9.png?size=4096" alt="mentalisit" width="40" height="40">
+        </li>
+        <li>
+            <strong><a href="https://discord.gg/p588eHaFqh" target="_blank">WS Community Leaderboard Discord Server</a></strong> for fostering an amazing community.
+            <br>
+            <img src="https://cdn.discordapp.com/icons/800598168906760202/825ee844e6b491d4bc48b5b015264713.webp?size=640" alt="Discord Server" width="50" height="50">
+        </li>
+    </ul>
+	</center>
+</div>
+
+
+
 
 
 </body>
