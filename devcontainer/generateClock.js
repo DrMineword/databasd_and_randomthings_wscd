@@ -7,7 +7,7 @@ const git = simpleGit();
 
 // Setup git repository and commit configuration
 const repoDir = path.resolve(__dirname);
-const outputDir = path.join(repoDir, 'clock_gifs');  // Folder where GIFs will be saved
+const outputDir = path.join(repoDir, 'generated_gifs');  // Folder where GIFs will be saved
 
 // Ensure the output directory exists
 if (!fs.existsSync(outputDir)) {
@@ -57,6 +57,37 @@ const generateGIF = (hour, minute) => {
     });
 };
 
+const pushToGitHubWithRetry = async (maxRetries = 5, delay = 2000) => {
+    let attempt = 0;
+    while (attempt < maxRetries) {
+        try {
+            console.log(`Attempting to push to GitHub (Attempt ${attempt + 1})...`);
+
+            // Stage all changes
+            await git.add('./*');
+
+            // Commit changes
+            await git.commit(`Add clock GIFs for 24 hours`);
+
+            // Push to GitHub
+            await git.push('origin', 'gif-generation');
+            
+            console.log("GIFs successfully pushed to GitHub!");
+            return;
+        } catch (error) {
+            attempt++;
+            console.error(`Error pushing to GitHub (Attempt ${attempt}): ${error.message}`);
+            
+            if (attempt < maxRetries) {
+                console.log(`Retrying in ${delay / 1000} seconds...`);
+                await new Promise(resolve => setTimeout(resolve, delay));  // wait before retrying
+            } else {
+                console.log("Max retries reached. Push failed.");
+            }
+        }
+    }
+};
+
 const generateAndPushGIFs = async () => {
     try {
         // Generate all 1440 GIFs (60 minutes * 24 hours)
@@ -69,21 +100,12 @@ const generateAndPushGIFs = async () => {
             }
         }
 
-        // Commit and push to GitHub
-        console.log("All GIFs generated. Committing and pushing to GitHub...");
-        
-        // Stage all changes
-        await git.add('./*');
+        // Retry pushing GIFs to GitHub
+        console.log("All GIFs generated. Attempting to push to GitHub...");
+        await pushToGitHubWithRetry();
 
-        // Commit changes
-        await git.commit(`Add clock GIFs for 24 hours`);
-
-        // Push to GitHub
-        await git.push('origin', 'gif-generation');
-
-        console.log("GIFs pushed to GitHub successfully.");
     } catch (error) {
-        console.error("Error generating GIFs or pushing to GitHub:", error);
+        console.error("Error generating GIFs:", error);
     }
 };
 
