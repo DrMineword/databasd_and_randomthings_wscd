@@ -1,0 +1,8 @@
+{
+    "name": "Node.js 14",
+    "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:0-14",
+    "features": {
+        "node": "14"
+    },
+    "postCreateCommand": "npm install"
+}
