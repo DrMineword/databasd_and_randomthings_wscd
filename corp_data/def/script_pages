@@ -1,0 +1,334 @@
+
+<script>
+
+
+// CORPORATION: $C1ID
+
+
+        // Markdown to HTML Table conversion function
+        function convertMarkdownToHTML(markdown) {
+            const lines = markdown.split("\n").filter(line => line.trim() !== "");
+            const headers = lines[0].split("|").map(header => header.trim()).slice(1, -1);
+            const rows = lines.slice(2);
+
+            let tableHTML = "<table><thead><tr>";
+
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+
+            tableHTML += "</tr></thead><tbody>";
+
+            rows.forEach(row => {
+                const cols = row.split("|").map(col => col.trim()).slice(1, -1);
+                tableHTML += "<tr>";
+                cols.forEach(col => {
+                    tableHTML += `<td>${col}</td>`;
+                });
+                tableHTML += "</tr>";
+            });
+
+            tableHTML += "</tbody></table>";
+            return tableHTML;
+        }
+
+        // Convert Links to Hyperlinks
+        function convertLinksToHyperlinks(markdown) {
+            return markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+                return `<a href="${url}" target="_self">${text}</a>`;
+            });
+        }
+
+        // Convert Boost Status Timestamp
+        function convertBoostStatus(saved_ms, now_ms) {
+            return saved_ms > now_ms ? "<p>Boost is active and will end on ${time_boost_end} UTC</p>" : "<p>Boost is not active.</p>";
+        }
+
+        // Get the markdown content
+        const table1Markdown = document.querySelector("#table1 pre").textContent;
+        const table2Markdown = document.querySelector("#table2 pre").textContent;
+
+        // Convert the Markdown tables to HTML
+        const table1HTML = convertMarkdownToHTML(table1Markdown);
+        let table2HTML = convertMarkdownToHTML(table2Markdown);
+
+        // Convert links in the markdown to hyperlinks
+        table2HTML = convertLinksToHyperlinks(table2HTML);
+
+        // Boost time check (Example timestamp)
+        const saved_ms = 9718192400000;  // Example saved timestamp (ms)
+        const now_ms = Date.now();  // Current Unix timestamp in milliseconds
+
+        // Get Boost status message
+        const boostStatusHTML = convertBoostStatus(saved_ms, now_ms);
+
+        // Update Boost Status message
+        document.getElementById('boostStatus').innerHTML = boostStatusHTML;
+
+        // Replace markdown with HTML table
+        document.getElementById("table1").innerHTML = table1HTML;
+        document.getElementById("table2").innerHTML = table2HTML;
+
+// base64.txt
+
+(() => {
+    const delayBetweenUpdatesMs = 250; // Delay between decoding updates in milliseconds
+    const maxElementsToDecodeAtOnce = 2; // Limit to one element at a time
+    let isProcessing = false;
+
+    const decodeBase64ToUtf8 = (base64String) => {
+        return decodeURIComponent(escape(atob(base64String)));
+    };
+
+    const decodeBase64InText = () => {
+        if (isProcessing) return;
+        isProcessing = true;
+
+        const rawTextElements = document.body.innerHTML;
+        const base64Matches = rawTextElements.match(/data-base64="([A-Za-z0-9+/=]+)"/g);
+
+        if (base64Matches && base64Matches.length > 0) {
+            setTimeout(() => {
+                const match = base64Matches[0];
+                const base64String = match.replace('data-base64="', '').replace('"', '');
+
+                try {
+                    const decodedText = decodeBase64ToUtf8(base64String);
+                    document.body.innerHTML = document.body.innerHTML.replace(match, decodedText);
+                    console.log("Updated Base64 text -> Decoded text");
+                } catch (error) {
+                    console.error("Decoding error:", base64String, error);
+                } finally {
+                    isProcessing = false;
+                    decodeBase64InText(); // Continue processing next element
+                }
+            }, delayBetweenUpdatesMs);
+        } else {
+            isProcessing = false;
+        }
+    };
+
+    // Initial trigger
+    decodeBase64InText();
+
+    // Observe changes to detect new Base64 content
+    new MutationObserver(() => decodeBase64InText())
+        .observe(document.body, { childList: true, subtree: true });
+
+})();
+
+
+// base64.txt
+
+// base64
+async function name_icon(name_base64, icon_base64) {
+    try {
+        // Decode and set page title with proper encoding handling for unusual characters
+        const decodedTitle = decodeBase64(name_base64);
+        document.title = decodedTitle;
+
+        // Convert Base64 to Blob
+        const byteCharacters = atob(icon_base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "image/png" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Set favicon using Blob URL
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.head.appendChild(link);
+        }
+        link.href = blobUrl;
+
+    } catch (error) {
+        console.error("Error setting name or icon:", error);
+    }
+}
+
+// Helper function to decode Base64 properly for Unicode support
+function decodeBase64(base64) {
+    const binaryString = atob(base64);
+    const byteArray = new Uint8Array(binaryString.length);
+
+    // Convert binary string to Uint8Array
+    for (let i = 0; i < binaryString.length; i++) {
+        byteArray[i] = binaryString.charCodeAt(i);
+    }
+
+    // Decode the byte array using TextDecoder (to handle any Unicode characters)
+    const decoder = new TextDecoder("utf-8");
+    return decoder.decode(byteArray);
+}
+
+
+// base64
+
+
+// colors
+
+function set_background(base64) {
+    const img = new Image();
+    img.src = "data:image/png;base64," + base64;
+    img.crossOrigin = "Anonymous";  
+
+    img.onload = function() {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        let colorCounts = {};
+        let step = 4 * Math.floor((canvas.width * canvas.height) / 500);
+
+        let uniqueColors = new Set();
+        for (let i = 0; i < pixels.length; i += step) {
+            let r = pixels[i];
+            let g = pixels[i + 1];
+            let b = pixels[i + 2];
+            uniqueColors.add(`${r},${g},${b}`);
+        }
+
+        uniqueColors = Array.from(uniqueColors).map(c => c.split(",").map(Number));
+
+        function rgbToHex([r, g, b]) {
+            return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+        }
+
+        function getContrastColor([r, g, b]) {
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 128 ? "#000000" : "#FFFFFF";
+        }
+
+        let colorIndex = 0;
+        let progress = 0;
+        let direction = 1;
+
+        function animateGradient() {
+            progress += direction * 0.002;
+            if (progress >= 1) {
+                progress = 0;
+                colorIndex = (colorIndex + 1) % uniqueColors.length;
+            }
+
+            let nextColorIndex = (colorIndex + 1) % uniqueColors.length;
+
+            function interpolateColor(colorA, colorB, factor) {
+                return colorA.map((c, i) => Math.round(c + (colorB[i] - c) * factor));
+            }
+
+            let interpolated1 = interpolateColor(uniqueColors[colorIndex], uniqueColors[nextColorIndex], progress);
+            let interpolated2 = interpolateColor(uniqueColors[(colorIndex + 2) % uniqueColors.length], uniqueColors[(nextColorIndex + 2) % uniqueColors.length], progress);
+
+            let bgColor1 = rgbToHex(interpolated1);
+            let bgColor2 = rgbToHex(interpolated2);
+            document.body.style.background = `linear-gradient(to right, ${bgColor1}, ${bgColor2})`;
+
+            // Removed logic to change h2 text color.
+            requestAnimationFrame(animateGradient);
+        }
+
+        animateGradient();
+    };
+}
+
+// colors
+
+
+name_icon("$name_base64", "$icon_base64");
+
+set_background("$icon_base64");
+
+
+// chart
+
+async function fetchAndDisplayCharts(id) {
+
+    const urlJammer = `jam=${Math.random().toString(36).substr(2, 10)}&type=raspberry%20jam`;
+
+    const apiUrl = `https://raw.githubusercontent.com/DrMineword/databasd_and_randomthings_wscd/refs/heads/main/corporations_page/${id}?${urlJammer}`;
+
+    try {
+
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const chartsDiv = document.getElementById("charts");
+
+        chartsDiv.innerHTML = ""; // Clear previous content
+
+        data.urls.forEach(chart => {
+
+            chartsDiv.appendChild(document.createElement("br"));
+            chartsDiv.appendChild(document.createElement("br"));
+
+            const img = document.createElement("img");
+
+            img.src = chart.url;
+            img.alt = `Chart ${chart.id}`;
+            img.style.width = "55%";
+            img.style.height = "auto";
+            img.style.display = "block";
+            img.style.margin = "0 auto";
+
+            chartsDiv.appendChild(img);
+
+            chartsDiv.appendChild(document.createElement("br"));
+
+        });
+
+    } catch (error) {
+        console.error("Error fetching chart data:", error);
+    }
+}
+
+// chart
+
+
+fetchAndDisplayCharts("$C1ID");
+
+
+$callprint
+
+
+function remove_empty(delay, element) {
+    setTimeout(() => {
+        // Get all <p> elements inside the specified element
+        const paragraphs = document.querySelectorAll(element);
+        
+        paragraphs.forEach(p => {
+            // Check if the <p> element is empty
+            if (!p.innerHTML.trim()) {
+                p.remove(); // Remove the empty <p> element
+            }
+        });
+    }, delay);
+}
+
+// Usage example:
+remove_empty(3000, 'p'); // Removes empty <p> elements after 3 seconds
+
+
+            // old_qr_code_maker
+// YXN5bmMgZnVuY3Rpb24gcXJjb2RlX21ha2Uod2lkdGgsIGhlaWdodCkgewogICAgICAgICAgICBjb25zdCBjdXJyZW50VXJsID0gd2luZG93LmxvY2F0aW9uLmhyZWY7Cn0K
+// YXN5bmMgZnVuY3Rpb24gZ2V0RmF2aWNvbkJhc2U2NCgpIHsKICAgICAgICAgICAgICAgIGxldCBmYXZpY29uVXJsID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcignbGlua1tyZWx+PSJpY29uIl0nKT8uaHJlZjsKICAgICAgICAgICAgICAgIGlmICghZmF2aWNvblVybCkgewogICAgICAgICAgICAgICAgICAgIGZhdmljb25VcmwgPSBgJHt3aW5kb3cubG9jYXRpb24ub3JpZ2lufS9mYXZpY29uLmljb2A7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB0cnkgewogICAgICAgICAgICAgICAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmF2aWNvblVybCk7CiAgICAgICAgICAgICAgICAgICAgY29uc3QgYmxvYiA9IGF3YWl0IHJlc3BvbnNlLmJsb2IoKTsKICAgICAgICAgICAgICAgICAgICByZXR1cm4gbmV3IFByb21pc2UocmVzb2x2ZSA9PiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IHJlYWRlciA9IG5ldyBGaWxlUmVhZGVyKCk7CiAgICAgICAgICAgICAgICAgICAgICAgIHJlYWRlci5vbmxvYWQgPSAoKSA9PiByZXNvbHZlKHJlYWRlci5yZXN1bHQpOwogICAgICAgICAgICAgICAgICAgICAgICByZWFkZXIucmVhZEFzRGF0YVVSTChibG9iKTsKICAgICAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgICAgIH0gY2F0Y2ggKGVycm9yKSB7CiAgICAgICAgICAgICAgICAgICAgY29uc29sZS53YXJuKCJGYWlsZWQgdG8gZmV0Y2ggZmF2aWNvbjoiLCBlcnJvcik7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIG51bGw7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGZ1bmN0aW9uIGdldERvbWluYW50Q29sb3JGcm9tSW1hZ2UoYmFzZTY0SW1hZ2UpIHsKICAgICAgICAgICAgICAgIHJldHVybiBuZXcgUHJvbWlzZShyZXNvbHZlID0+IHsKICAgICAgICAgICAgICAgICAgICBjb25zdCBpbWcgPSBuZXcgSW1hZ2UoKTsKICAgICAgICAgICAgICAgICAgICBpbWcuc3JjID0gYmFzZTY0SW1hZ2U7CiAgICAgICAgICAgICAgICAgICAgaW1nLm9ubG9hZCA9ICgpID0+IHsKICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgY2FudmFzID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnY2FudmFzJyk7CiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGN0eCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgICAgICAgICAgICAgICAgICAgICBjYW52YXMud2lkdGggPSBpbWcud2lkdGg7CiAgICAgICAgICAgICAgICAgICAgICAgIGNhbnZhcy5oZWlnaHQgPSBpbWcuaGVpZ2h0OwogICAgICAgICAgICAgICAgICAgICAgICBjdHguZHJhd0ltYWdlKGltZywgMCwgMCk7CiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGltYWdlRGF0YSA9IGN0eC5nZXRJbWFnZURhdGEoMCwgMCwgaW1nLndpZHRoLCBpbWcuaGVpZ2h0KS5kYXRhOwoKICAgICAgICAgICAgICAgICAgICAgICAgbGV0IHIgPSAwLCBnID0gMCwgYiA9IDAsIGNvdW50ID0gMDsKICAgICAgICAgICAgICAgICAgICAgICAgZm9yIChsZXQgaSA9IDA7IGkgPCBpbWFnZURhdGEubGVuZ3RoOyBpICs9IDQpIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHIgKz0gaW1hZ2VEYXRhW2ldOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgZyArPSBpbWFnZURhdGFbaSArIDFdOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgYiArPSBpbWFnZURhdGFbaSArIDJdOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgY291bnQrKzsKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICByID0gTWF0aC5mbG9vcihyIC8gY291bnQpOwogICAgICAgICAgICAgICAgICAgICAgICBnID0gTWF0aC5mbG9vcihnIC8gY291bnQpOwogICAgICAgICAgICAgICAgICAgICAgICBiID0gTWF0aC5mbG9vcihiIC8gY291bnQpOwoKICAgICAgICAgICAgICAgICAgICAgICAgcmVzb2x2ZShgcmdiKCR7cn0sJHtnfSwke2J9KWApOwogICAgICAgICAgICAgICAgICAgIH07CiAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZnVuY3Rpb24gcmdiVG9IZXgocmdiU3RyaW5nKSB7CiAgICAgICAgICAgICAgICBjb25zdCBbciwgZywgYl0gPSByZ2JTdHJpbmcubWF0Y2goL1xkKy9nKS5tYXAoTnVtYmVyKTsKICAgICAgICAgICAgICAgIHJldHVybiBgIyR7KCgxIDw8IDI0KSArIChyIDw8IDE2KSArIChnIDw8IDgpICsgYikudG9TdHJpbmcoMTYpLnBhZFN0YXJ0KDYsICcwJyl9YDsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgaWYgKCF3aW5kb3cuUVJDb2RlKSB7CiAgICAgICAgICAgICAgICBjb25zdCBzY3JpcHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdzY3JpcHQnKTsKICAgICAgICAgICAgICAgIHNjcmlwdC5zcmMgPSAnaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9xcmNvZGUvYnVpbGQvcXJjb2RlLm1pbi5qcyc7CiAgICAgICAgICAgICAgICBkb2N1bWVudC5oZWFkLmFwcGVuZENoaWxkKHNjcmlwdCk7CiAgICAgICAgICAgICAgICBhd2FpdCBuZXcgUHJvbWlzZShyZXNvbHZlID0+IHNjcmlwdC5vbmxvYWQgPSByZXNvbHZlKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgY29uc3QgZmF2aWNvbkJhc2U2NCA9IGF3YWl0IGdldEZhdmljb25CYXNlNjQoKTsKICAgICAgICAgICAgbGV0IHFyQ29sb3IgPSAnIzAwMDAwMCc7ICAvLyBEZWZhdWx0IHRvIGJsYWNrCgogICAgICAgICAgICBpZiAoZmF2aWNvbkJhc2U2NCkgewogICAgICAgICAgICAgICAgY29uc3QgZG9taW5hbnRDb2xvciA9IGF3YWl0IGdldERvbWluYW50Q29sb3JGcm9tSW1hZ2UoZmF2aWNvbkJhc2U2NCk7CiAgICAgICAgICAgICAgICBxckNvbG9yID0gcmdiVG9IZXgoZG9taW5hbnRDb2xvcik7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGNvbnN0IHFyQmFja2dyb3VuZCA9ICcjZmZmZmZmJzsgIC8vIFdoaXRlIGJhY2tncm91bmQgZm9yIFFSIGNvZGUKCiAgICAgICAgICAgIGNvbnN0IGNhbnZhcyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2NhbnZhcycpOwogICAgICAgICAgICBjYW52YXMud2lkdGggPSB3aWR0aDsKICAgICAgICAgICAgY2FudmFzLmhlaWdodCA9IGhlaWdodDsKCiAgICAgICAgICAgIGF3YWl0IFFSQ29kZS50b0NhbnZhcyhjYW52YXMsIGN1cnJlbnRVcmwsIHsKICAgICAgICAgICAgICAgIHdpZHRoOiB3aWR0aCwKICAgICAgICAgICAgICAgIG1hcmdpbjogMSwKICAgICAgICAgICAgICAgIGNvbG9yOiB7CiAgICAgICAgICAgICAgICAgICAgZGFyazogcXJDb2xvciwKICAgICAgICAgICAgICAgICAgICBsaWdodDogcXJCYWNrZ3JvdW5kCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0pOwoKICAgICAgICAgICAgaWYgKGZhdmljb25CYXNlNjQpIHsKICAgICAgICAgICAgICAgIGNvbnN0IGN0eCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgICAgICAgICAgICAgY29uc3QgaW1nID0gbmV3IEltYWdlKCk7CiAgICAgICAgICAgICAgICBpbWcuc3JjID0gZmF2aWNvbkJhc2U2NDsKCiAgICAgICAgICAgICAgICBhd2FpdCBuZXcgUHJvbWlzZShyZXNvbHZlID0+IGltZy5vbmxvYWQgPSByZXNvbHZlKTsKCiAgICAgICAgICAgICAgICBjb25zdCBpY29uU2l6ZSA9IE1hdGguZmxvb3Iod2lkdGggKiAwLjMpOyAgLy8gMzAlIG9mIFFSIHNpemUKICAgICAgICAgICAgICAgIGNvbnN0IGljb25YID0gKHdpZHRoIC0gaWNvblNpemUpIC8gMjsKICAgICAgICAgICAgICAgIGNvbnN0IGljb25ZID0gKGhlaWdodCAtIGljb25TaXplKSAvIDI7CgogICAgICAgICAgICAgICAgY3R4LmZpbGxTdHlsZSA9IHFyQmFja2dyb3VuZDsgIC8vIENsZWFyIHNwYWNlIGZvciBpY29uCiAgICAgICAgICAgICAgICBjdHguYmVnaW5QYXRoKCk7CiAgICAgICAgICAgICAgICBjdHguYXJjKHdpZHRoIC8gMiwgaGVpZ2h0IC8gMiwgaWNvblNpemUgLyAyICsgMiwgMCwgTWF0aC5QSSAqIDIpOwogICAgICAgICAgICAgICAgY3R4LmZpbGwoKTsKCiAgICAgICAgICAgICAgICBjdHguZHJhd0ltYWdlKGltZywgaWNvblgsIGljb25ZLCBpY29uU2l6ZSwgaWNvblNpemUpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBjb25zdCBxckJhc2U2NCA9IGNhbnZhcy50b0RhdGFVUkwoImltYWdlL3BuZyIpOwoKICAgICAgICAgICAgY29uc3QgdGFyZ2V0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2lkX3FyaWNvbicpOwogICAgICAgICAgICBpZiAodGFyZ2V0KSB7CiAgICAgICAgICAgICAgICB0YXJnZXQuaW5uZXJIVE1MID0gYDxpbWcgc3JjPSIke3FyQmFzZTY0fSIgc3R5bGU9IndpZHRoOiR7d2lkdGh9cHg7aGVpZ2h0OiR7aGVpZ2h0fXB4OyI+YDsKICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgIGNvbnNvbGUud2FybigiI2lkX3FyaWNvbiBub3QgZm91bmQg4oCUIHNraXBwaW5nIGlubGluZSBkaXNwbGF5LiIpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBjb25zb2xlLmxvZygiUVIgQmFzZTY0OiIsIHFyQmFzZTY0KTsKCiAgICAgICAgICAgIGZldGNoKCcvZGVidWcvcXItY2FwdHVyZScsIHsKICAgICAgICAgICAgICAgIG1ldGhvZDogJ1BPU1QnLAogICAgICAgICAgICAgICAgaGVhZGVyczogeydDb250ZW50LVR5cGUnOiAnYXBwbGljYXRpb24vanNvbid9LAogICAgICAgICAgICAgICAgYm9keTogSlNPTi5zdHJpbmdpZnkoe3VybDogY3VycmVudFVybCwgcXJCYXNlNjR9KQogICAgICAgICAgICB9KS5jYXRjaChlcnIgPT4gY29uc29sZS53YXJuKCJGYWlsZWQgdG8gdXBsb2FkIFFSIGRlYnVnOiIsIGVycikpOwogICAgICAgIH0=
+
+$code
+
+       
+    </script>
