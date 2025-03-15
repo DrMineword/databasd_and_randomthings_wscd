@@ -72,8 +72,8 @@
 // base64.txt
 
 (() => {
-    const delayBetweenUpdatesMs = 117; // Delay between decoding updates in milliseconds
-    const maxElementsToDecodeAtOnce = 3; // Limit to one element at a time
+    const delayBetweenUpdatesMs = 6; // Delay between decoding updates in milliseconds
+    const maxElementsToDecodeAtOnce = 2; // Limit to one element at a time
     let isProcessing = false;
 
     const decodeBase64ToUtf8 = (base64String) => {
